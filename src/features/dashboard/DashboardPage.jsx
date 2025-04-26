@@ -9,14 +9,24 @@ export const Component = () => {
 
   return (
     <div>
-      <h1>Dashboard Page</h1>
+      <h1 style={{ fontFamily: 'Poppins' }}>Dashboard Page</h1>
+
       <div className={styles.buttonGroup}>
-        <Button onClick={toggleTheme} className={styles.themeButton}>
-          Current Theme: {theme === 'light' ? '🌞' : '🌙'}
+        <Button
+          onClick={toggleTheme}
+          style={{ fontFamily: 'AlibabaPuHuiTi' }}
+          className={styles.themeButton}
+        >
+          当前主题: {theme === 'light' ? '🌞' : '🌙'}
         </Button>
 
-        <Button onClick={() => navigate('/login')}>Go to Login</Button>
-        <Button onClick={() => navigate('/canvas/1')}>Go to Canvas</Button>
+        <Button onClick={() => navigate('/login')} style={{ fontFamily: 'SourceHanSansSC' }}>
+          去登录页
+        </Button>
+
+        <Button onClick={() => navigate('/canvas/1')} style={{ fontFamily: 'ZCOOLKuaiLe' }}>
+          去画板页
+        </Button>
       </div>
     </div>
   );
