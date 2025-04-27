@@ -1,8 +1,8 @@
 .button {
   padding: 8px 16px;
-  background-color: var(--accent-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background-color: light-dark(var(--orange-400), var(--gray-700));
+  color: light-dark(var(--gray-900), var(--gray-50));
+  border: 1px solid light-dark(var(--orange-100), var(--gray-600));
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -11,4 +11,5 @@
 .button:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+  background-color: light-dark(var(--orange-500), var(--gray-600));
 }
