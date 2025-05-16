@@ -1,19 +1,95 @@
+/* 基础布局 */
+.dashboard {
+  height: 100vh;
+  display: flex;
+}
+
+/* Logo 区域 */
+.logo {
+  height: 64px;
+  margin: 0;
+  padding: 0 24px;
+  font-size: 22px;
+  font-weight: bold;
+  font-family: 'ZCOOLKuaiLe', sans-serif;
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+/* 侧边栏 */
+.dashboard :global(.ant-layout-sider) {
+  border-right: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+}
+
+/* 菜单样式 */
+.dashboard :global(.ant-menu) {
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+}
+
+.dashboard :global(.ant-menu-item),
+.dashboard :global(.ant-menu-submenu) {
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.dashboard :global(.ant-menu-submenu-title:hover) {
+  color: var(--accent-primary);
+}
+
+.dashboard :global(.ant-menu-item:hover) {
+  color: var(--accent-primary);
+}
+
+.dashboard :global(.ant-menu-item-selected) {
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+/* 头部区域 */
+.header {
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+/* 主题切换图标 */
+.header :global(.anticon-bulb) {
+  font-size: 20px;
+  margin-left: 16px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.header :global(.anticon-bulb:hover) {
+  color: var(--accent-primary);
+}
+
+/* 内容区域 */
+.content {
+  padding: 24px;
+  margin: 24px;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  min-height: 280px;
+  border-radius: 8px;
+}
+
+/* 动画过渡效果 */
+.dashboard :global(*) {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 按钮组样式 */
 .buttonGroup {
-  margin-top: 20px;
+  padding: 16px;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.themeButton {
-  background-color: light-dark(var(--orange-500), var(--gray-600));
-  color: light-dark(var(--gray-900), var(--gray-50));
-  border: 2px solid light-dark(var(--orange-400), var(--gray-700));
-  border-radius: 8px;
-  padding: 12px 24px;
-}
-
-.themeButton:hover {
-  background-color: light-dark(var(--orange-600), var(--gray-500));
-  transform: translateY(-2px);
+  gap: 8px;
 }
