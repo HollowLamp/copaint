@@ -1,0 +1,198 @@
+.pageContainer {
+    position: relative;
+    padding: 20px;
+  }
+/* 菜单容器 */
+.menuContainer {
+position: relative;
+display: inline-block;
+}
+
+.menuButton {
+font-size: 24px;
+height: 50px;
+width: 50px;
+padding: 5px;
+cursor: pointer;
+background: white;
+border: 1px solid #ccc;
+border-radius: 4px;
+}
+
+.menuBox {
+position: absolute;
+top: 50px;
+left: 0;
+width: 150px;
+height: auto;
+background-color: #fff;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+padding: 10px 0;
+z-index: 1000;
+font-size:small;
+}
+
+.menuBox ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+
+.menuBox li {
+padding: 5px 10px;
+cursor: pointer;
+}
+
+.menuBox li:hover {
+background-color: #f0f0f0;
+}
+  
+  .content {
+    margin-top: 30px;
+  }
+
+/* 画布工具容器 */
+.toolbarContainer {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 4px 6px;
+}
+
+.toolbarButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 6px 10px;
+}
+
+.verticalDivider {
+  width: 1px;
+  height: 24px;
+  background-color: #ccc;
+  margin: 0 4px;
+}
+
+/* 画布右上角按钮容器：分享、素材库 */
+  .rightButtons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .rightButtons button {
+    background: white !important;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+  }
+  .rightButtons button:hover {
+    background: #f0f0f0 !important  ;
+    transform: translateY(-1px);
+  }
+/* 画布左下侧按钮组：缩放、重做、撤销 */
+  .bottomLeft {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 8px;
+  }
+  
+/* 画布右下侧按钮组：问题 */
+  .bottomRight {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .cornerButton {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 18px;
+    padding: 6px 10px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: background 0.2s ease;
+  }
+  
+  .cornerButton:hover {
+    background-color: #f0f0f0;
+  }
+/* 画布左下侧缩放按钮 */
+  .ZoomButton {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px auto; /* 居中对齐 */
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+}
+
+.ZoomButton button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #333;
+    margin: 0; /* 移除外边距 */
+}
+
+.ZoomButton .value {
+    margin: 0 10px;
+    font-size: 16px;
+    color: #333;
+    min-width: 40px; /* 设置最小宽度 */
+    display: inline-block; /* 使min-width生效 */
+    text-align: center; /* 居中对齐文本 */
+}
+
+.ZoomButton button:hover {
+    background-color: #e0e0e0;
+}
+/* 画布左下侧撤销重做按钮 */
+.UndoRedoButton {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px auto; /* 居中对齐 */
+    position: absolute;
+    bottom: 5px;
+    left: 150px;
+}
+.UndoRedoButton button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #333;
+    margin: 0; /* 移除外边距 */
+}
+.UndoRedoButton button:hover {
+    background-color: #e0e0e0 ;
+}
