@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Form, Input, Modal, Divider, App } from 'antd';
 import { UserOutlined, LockOutlined, GithubOutlined, GoogleOutlined } from '@ant-design/icons';
 import { Button } from '../../components/button/Button';
-import { useNavigate } from 'react-router';
+import { useNavigate, Navigate, useLocation } from 'react-router';
+import { useAuthUser } from '../../hooks/useAuthUser';
 import styles from './LoginPage.module.css';
 import {
   login,
@@ -15,6 +16,8 @@ import {
 export const Component = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, loading } = useAuthUser(); // 解构 loading
   const [form] = Form.useForm();
   const [registerOpen, setRegisterOpen] = useState(false);
   const [registerForm] = Form.useForm();
@@ -25,6 +28,17 @@ export const Component = () => {
   const [githubLoading, setGithubLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
+
+  // 等待加载完成
+  if (loading) {
+    return null;
+  }
+
+  // 加载完成后再判断重定向
+  if (user) {
+    const from = location.state?.from || '/';
+    return <Navigate to={from} replace />;
+  }
 
   const handleSubmit = async (values) => {
     try {
