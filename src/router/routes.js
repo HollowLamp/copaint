@@ -42,4 +42,8 @@ export const routes = [
     path: '/canvas/:id',
     lazy: () => import('../features/canvas/CanvasPage'),
   },
+  {
+    path: '/demo',
+    lazy: () => import('../features/demo/index'), // demo 入口tab页
+  }
 ];
