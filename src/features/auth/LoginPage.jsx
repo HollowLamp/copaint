@@ -108,131 +108,141 @@ export const Component = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.formWrapper}>
-        <h1 className={styles.title}>CoPaint</h1>
-        <p className={styles.subtitle}>登录您的账户</p>
+      <div className={styles.leftSection}>
+        <div className={styles.logoWrapper}>
+          <img src="/login_logo.png" alt="CoPaint" className={styles.logo} />
+          <h1 className={styles.brandName}>CoPaint</h1>
+          <p className={styles.slogan}>简单有趣的协作绘画工具</p>
+        </div>
+      </div>
 
-        <Form
-          form={form}
-          name="login"
-          onFinish={handleSubmit}
-          autoComplete="off"
-          layout="vertical"
-          className={styles.form}
-        >
-          <Form.Item name="username" rules={[{ required: true, message: '请输入邮箱' }]}>
-            <Input prefix={<UserOutlined />} placeholder="邮箱" size="large" />
-          </Form.Item>
+      <div className={styles.rightSection}>
+        <div className={styles.formWrapper}>
+          <h1 className={styles.title}>欢迎回来</h1>
+          <p className={styles.subtitle}>登录您的账户</p>
 
-          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-            <Input.Password prefix={<LockOutlined />} placeholder="密码" size="large" />
-          </Form.Item>
-
-          <Form.Item className={styles.remember}>
-            <a className={styles.forgotPassword} onClick={() => setResetOpen(true)}>
-              忘记密码？
-            </a>
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className={styles.submitButton}
-              loading={loginLoading}
-            >
-              登录
-            </Button>
-          </Form.Item>
-
-          <Divider>其他登录方式</Divider>
-
-          <div className={styles.socialLogin}>
-            <Button
-              icon={<GithubOutlined />}
-              onClick={handleGithub}
-              loading={githubLoading}
-              className={styles.socialButton}
-            >
-              GitHub 登录
-            </Button>
-            <Button
-              icon={<GoogleOutlined />}
-              onClick={handleGoogle}
-              loading={googleLoading}
-              className={styles.socialButton}
-            >
-              Google 登录
-            </Button>
-          </div>
-
-          <div className={styles.footer}>
-            <span>还没有账号？</span>
-            <a onClick={() => setRegisterOpen(true)}>立即注册</a>
-          </div>
-        </Form>
-
-        <Modal
-          title="注册账号"
-          open={registerOpen}
-          onCancel={() => setRegisterOpen(false)}
-          footer={null}
-        >
-          <Form form={registerForm} name="register" onFinish={handleRegister} layout="vertical">
-            <Form.Item
-              name="email"
-              rules={[
-                { required: true, message: '请输入邮箱' },
-                { type: 'email', message: '请输入有效的邮箱地址' },
-              ]}
-            >
-              <Input placeholder="邮箱" />
+          <Form
+            form={form}
+            name="login"
+            onFinish={handleSubmit}
+            autoComplete="off"
+            layout="vertical"
+            className={styles.form}
+          >
+            <Form.Item name="username" rules={[{ required: true, message: '请输入邮箱' }]}>
+              <Input prefix={<UserOutlined />} placeholder="邮箱" size="large" />
             </Form.Item>
-            <Form.Item name="nickname" rules={[{ required: true, message: '请输入昵称' }]}>
-              <Input placeholder="昵称" />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: '请输入密码' },
-                { min: 6, message: '密码至少6位' },
-              ]}
-            >
-              <Input.Password placeholder="密码" />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block loading={registerLoading}>
-                注册
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
 
-        <Modal
-          title="找回密码"
-          open={resetOpen}
-          onCancel={() => setResetOpen(false)}
-          footer={null}
-          maskClosable={false}
-        >
-          <Form form={resetForm} name="reset" onFinish={handleReset} layout="vertical">
-            <Form.Item
-              name="email"
-              rules={[
-                { required: true, message: '请输入邮箱' },
-                { type: 'email', message: '请输入有效的邮箱地址' },
-              ]}
-            >
-              <Input prefix={<UserOutlined />} placeholder="请输入注册时的邮箱" />
+            <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
+              <Input.Password prefix={<LockOutlined />} placeholder="密码" size="large" />
+            </Form.Item>
+
+            <Form.Item className={styles.remember}>
+              <a className={styles.forgotPassword} onClick={() => setResetOpen(true)}>
+                忘记密码？
+              </a>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" block loading={resetLoading}>
-                发送重置邮件
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={styles.submitButton}
+                loading={loginLoading}
+              >
+                登录
               </Button>
             </Form.Item>
+
+            <Divider>其他登录方式</Divider>
+
+            <div className={styles.socialLogin}>
+              <Button
+                icon={<GithubOutlined />}
+                onClick={handleGithub}
+                loading={githubLoading}
+                className={styles.socialButton}
+              >
+                GitHub 登录
+              </Button>
+              <Button
+                icon={<GoogleOutlined />}
+                onClick={handleGoogle}
+                loading={googleLoading}
+                className={styles.socialButton}
+              >
+                Google 登录
+              </Button>
+            </div>
+
+            <div className={styles.footer}>
+              <span>还没有账号？</span>
+              <a onClick={() => setRegisterOpen(true)}>立即注册</a>
+            </div>
           </Form>
-        </Modal>
+
+          <Modal
+            title="注册账号"
+            open={registerOpen}
+            onCancel={() => setRegisterOpen(false)}
+            footer={null}
+          >
+            <Form form={registerForm} name="register" onFinish={handleRegister} layout="vertical">
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: '请输入邮箱' },
+                  { type: 'email', message: '请输入有效的邮箱地址' },
+                ]}
+              >
+                <Input placeholder="邮箱" />
+              </Form.Item>
+              <Form.Item name="nickname" rules={[{ required: true, message: '请输入昵称' }]}>
+                <Input placeholder="昵称" />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  { required: true, message: '请输入密码' },
+                  { min: 6, message: '密码至少6位' },
+                ]}
+              >
+                <Input.Password placeholder="密码" />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" block loading={registerLoading}>
+                  注册
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+
+          <Modal
+            title="找回密码"
+            open={resetOpen}
+            onCancel={() => setResetOpen(false)}
+            footer={null}
+            maskClosable={false}
+          >
+            <Form form={resetForm} name="reset" onFinish={handleReset} layout="vertical">
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: '请输入邮箱' },
+                  { type: 'email', message: '请输入有效的邮箱地址' },
+                ]}
+              >
+                <Input prefix={<UserOutlined />} placeholder="请输入注册时的邮箱" />
+              </Form.Item>
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit" block loading={resetLoading}>
+                  发送重置邮件
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
       </div>
     </div>
   );

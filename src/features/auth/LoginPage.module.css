@@ -1,17 +1,56 @@
 .container {
   height: 100vh;
   display: flex;
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+}
+
+.leftSection {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  padding: 40px;
+}
+
+.logoWrapper {
+  text-align: center;
+}
+
+.logo {
+  width: 360px;
+  height: auto;
+  margin-bottom: 24px;
+}
+
+.brandName {
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--accent-primary);
+  margin-bottom: 16px;
+  font-family: 'ZCOOLKuaiLe', sans-serif;
+}
+
+.slogan {
+  font-size: 18px;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  opacity: 0.8;
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
 }
 
 .formWrapper {
   width: 100%;
   max-width: 400px;
-  padding: 40px;
   background-color: light-dark(var(--bg-secondary), var(--bg-primary));
   border-radius: 8px;
+  padding: 40px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
@@ -133,4 +172,31 @@
 :global(.ant-modal-root) .form :global(.ant-input::placeholder) {
   color: light-dark(var(--text-secondary), var(--text-primary));
   opacity: 0.5;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .leftSection {
+    padding: 20px;
+  }
+
+  .logo {
+    width: 120px;
+  }
+
+  .brandName {
+    font-size: 32px;
+  }
+
+  .rightSection {
+    padding: 20px;
+  }
+
+  .formWrapper {
+    padding: 20px;
+  }
 }
