@@ -56,7 +56,8 @@ export const Component = () => {
       // 2. 获取每个文件的详情
       const files = await Promise.all(
         favs.map(async (fileId) => {
-          const file = await fileService.getFileById(fileId);
+          const file = await fileService.getFileContent(fileId);
+          console.log("123",file);
           return {
             ...file,
             id: fileId,              // 保留 fileId 用于删除等操作
@@ -75,7 +76,7 @@ export const Component = () => {
 
   // 🧠 处理排序
   const sortedFavorites = [...favorites]
-    .filter(file => file.name.includes(search)) // 🔍 搜索过滤
+    .filter(file => file.fileName.includes(search)) // 🔍 搜索过滤
     .sort((a, b) => {
       const valA = a[sortBy];
       const valB = b[sortBy];
@@ -144,7 +145,7 @@ export const Component = () => {
             <Card
               title={
                 <span>
-                  {file.name || '未命名'}
+                  {file.fileName || '未命名'}
                   <EditOutlined style={{ marginLeft: 8 }} />
                 </span>
               }
@@ -157,7 +158,7 @@ export const Component = () => {
               <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>修改时间：{file.updateTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{file.ownerName || '未知'}</p>
+              <p>文件归属：{file.fileName || '未知'}</p>
             </Card>
           </Col>
         ))}

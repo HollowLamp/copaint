@@ -8,7 +8,8 @@ import {
   doc,
   query,
   where,
-  serverTimestamp
+  serverTimestamp,
+  getDoc
 } from 'firebase/firestore';
 
 // 新建文件
@@ -74,7 +75,7 @@ export async function getFileContent(fileId) {
   const docRef = doc(firestore, "files", fileId);
   const snap = await getDoc(docRef);
   if (!snap.exists()) return null;
-  return snap.data().content || {};
+  return snap.data() || {};
 }
 
 // 保存文件内容
