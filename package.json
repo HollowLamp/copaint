@@ -16,7 +16,8 @@
     "firebase": "^11.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router": "^7.5.2"
+    "react-router": "^7.5.2",
+    "copaint": "file:"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
