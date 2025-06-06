@@ -48,6 +48,8 @@ const buildEditor = ({
   selectedObjects,
   strokeDashArray,
   setStrokeDashArray,
+  defaultWidth,
+  defaultHeight,
 }) => {
   const generateSaveOptions = () => {
     const { width, height, left, top } = getWorkspace();
@@ -100,19 +102,35 @@ const buildEditor = ({
     // 加载时不触发保存
     canvas.loadFromJSON(data, () => {
       // 确保workspace存在并设置为clipPath
-      const workspace = canvas.getObjects().find((obj) => obj.name === 'clip');
-      if (workspace) {
-        // 确保workspace不可选择和编辑
-        workspace.set({
+      let workspace = canvas.getObjects().find((obj) => obj.name === 'clip');
+
+      // 如果workspace不存在，创建一个默认的workspace
+      if (!workspace) {
+        console.warn('workspace对象不存在，创建默认workspace');
+        workspace = new fabric.Rect({
+          name: 'clip',
+          width: defaultWidth,
+          height: defaultHeight,
+          fill: 'white',
           selectable: false,
           hasControls: false,
-          evented: false
+          evented: false,
+          excludeFromExport: false
         });
-        // 设置为clipPath
-        canvas.clipPath = workspace;
-        // 确保workspace在最底层
-        canvas.sendToBack(workspace);
+        canvas.add(workspace);
       }
+
+      // 确保workspace设置正确
+      workspace.set({
+        selectable: false,
+        hasControls: false,
+        evented: false
+      });
+
+      // 设置为clipPath
+      canvas.clipPath = workspace;
+      // 确保workspace在最底层
+      canvas.sendToBack(workspace);
 
       autoZoom();
       // 加载完成后调用一次skip=true的保存，确保历史记录正确但不触发外部保存
@@ -126,7 +144,11 @@ const buildEditor = ({
 
   const center = (object) => {
     const workspace = getWorkspace();
-    const center = workspace?.getCenterPoint();
+    if (!workspace) {
+      console.warn('无法居中对象：workspace不存在');
+      return;
+    }
+    const center = workspace.getCenterPoint();
     if (!center) return;
     canvas._centerObject(object, center);
   };
@@ -210,8 +232,12 @@ const buildEditor = ({
         value,
         (image) => {
           const workspace = getWorkspace();
-          image.scaleToWidth(workspace?.width || 0);
-          image.scaleToHeight(workspace?.height || 0);
+          if (!workspace) {
+            console.warn('无法添加图片：workspace不存在');
+            return;
+          }
+          image.scaleToWidth(workspace.width || defaultWidth);
+          image.scaleToHeight(workspace.height || defaultHeight);
           addToCanvas(image);
         },
         { crossOrigin: 'anonymous' }
@@ -536,6 +562,7 @@ export const useEditor = ({
   defaultWidth,
   clearSelectionCallback,
   saveCallback,
+  hasEditPermission = true,
 }) => {
   const initialState = useRef(defaultState);
   const initialWidth = useRef(defaultWidth);
@@ -579,6 +606,7 @@ export const useEditor = ({
     paste,
     save,
     canvas,
+    hasEditPermission,
   });
 
   useLoadState({
@@ -612,6 +640,8 @@ export const useEditor = ({
         setStrokeDashArray,
         fontFamily,
         setFontFamily,
+        defaultWidth: initialWidth.current,
+        defaultHeight: initialHeight.current,
       });
     }
     return undefined;

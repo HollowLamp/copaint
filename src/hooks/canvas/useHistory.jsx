@@ -70,9 +70,20 @@ export const useHistory = ({ canvas, saveCallback }) => {
         canvas.renderAll();
         setHistoryIndex(previousIndex);
         skipSave.current = false;
+
+        // 撤销操作完成后，广播当前状态给其他协作者
+        if (saveCallback) {
+          const currentState = canvas.toJSON(JSON_KEYS);
+          const json = JSON.stringify(currentState);
+          const height = workspace?.height || 0;
+          const width = workspace?.width || 0;
+
+          console.log('广播撤销操作结果');
+          saveCallback({ json, height, width });
+        }
       });
     }
-  }, [canUndo, canvas, historyIndex]);
+  }, [canUndo, canvas, historyIndex, saveCallback]);
 
   // 重做撤销的操作
   const redo = useCallback(() => {
@@ -102,9 +113,20 @@ export const useHistory = ({ canvas, saveCallback }) => {
         canvas.renderAll();
         setHistoryIndex(nextIndex);
         skipSave.current = false;
+
+        // 重做操作完成后，广播当前状态给其他协作者
+        if (saveCallback) {
+          const currentState = canvas.toJSON(JSON_KEYS);
+          const json = JSON.stringify(currentState);
+          const height = workspace?.height || 0;
+          const width = workspace?.width || 0;
+
+          console.log('广播重做操作结果');
+          saveCallback({ json, height, width });
+        }
       });
     }
-  }, [canvas, historyIndex, canRedo]);
+  }, [canvas, historyIndex, canRedo, saveCallback]);
 
   return {
     save,

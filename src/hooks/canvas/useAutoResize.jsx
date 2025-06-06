@@ -16,6 +16,11 @@ export const useAutoResize = ({ canvas, container }) => {
 
     const localWorkspace = canvas.getObjects().find((obj) => obj.name === 'clip');
 
+    if (!localWorkspace) {
+      console.warn('workspace对象不存在，跳过自动缩放');
+      return;
+    }
+
     const scale = fabric.util.findScaleToFit(localWorkspace, {
       width,
       height,
@@ -25,8 +30,6 @@ export const useAutoResize = ({ canvas, container }) => {
 
     canvas.setViewportTransform(fabric.iMatrix.concat());
     canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
-
-    if (!localWorkspace) return;
 
     const workspaceCenter = localWorkspace.getCenterPoint();
     const viewportTransform = canvas.viewportTransform;
