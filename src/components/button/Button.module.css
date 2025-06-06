@@ -6,6 +6,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: 'ZCOOLKuaiLe', 'Poppins', 'AlibabaPuHuiTi', 'SourceHanSansSC', sans-serif;
 }
 
 .button:hover {

@@ -1,3 +1,5 @@
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
+
 export const routes = [
   {
     path: '/login',
@@ -5,45 +7,58 @@ export const routes = [
   },
   {
     path: '/',
-    lazy: () => import('../features/dashboard/DashboardPage'),
+    async lazy() {
+      const { ProtectedRoute } = await import('../components/auth/ProtectedRoute');
+      return { Component: ProtectedRoute };
+    },
     children: [
       {
-        path: 'manuscripts',
+        path: '/',
+        lazy: () => import('../features/dashboard/DashboardPage'),
         children: [
           {
-            path: 'forest',
+            path: 'manuscripts/forest',
             lazy: () => import('../features/manuscripts/ForestPage'),
           },
           {
-            path: 'mountains',
+            path: 'manuscripts/mountains',
             lazy: () => import('../features/manuscripts/MountainsPage'),
           },
+          {
+            path: 'favorites',
+            lazy: () => import('../features/favorites/FavoritesPage'),
+          },
+          {
+            path: 'recycle',
+            lazy: () => import('../features/recycle/RecyclePage'),
+          },
+          {
+            path: 'backup',
+            lazy: () => import('../features/backup/BackupPage'),
+          },
+          {
+            path: 'profile',
+            lazy: () => import('../features/profile/ProfilePage'),
+          },
         ],
-      },
-      {
-        path: 'favorites',
-        lazy: () => import('../features/favorites/FavoritesPage'),
-      },
-      {
-        path: 'recycle',
-        lazy: () => import('../features/recycle/RecyclePage'),
-      },
-      {
-        path: 'backup',
-        lazy: () => import('../features/backup/BackupPage'),
-      },
-      {
-        path: 'profile',
-        lazy: () => import('../features/profile/ProfilePage'),
       },
     ],
   },
   {
     path: '/canvas/:id',
-    lazy: () => import('../features/canvas/CanvasPage'),
+    async lazy() {
+      const { ProtectedRoute } = await import('../components/auth/ProtectedRoute');
+      return { Component: ProtectedRoute };
+    },
+    children: [
+      {
+        path: '',
+        lazy: () => import('../features/canvas/CanvasPage'),
+      },
+    ],
   },
   {
     path: '/demo',
-    lazy: () => import('../features/demo/index'), // demo 入口tab页
-  }
+    lazy: () => import('../features/demo/index'),
+  },
 ];

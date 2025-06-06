@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
-import { auth } from "../services/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from 'react';
+import { auth } from '../services/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
-// 用于监听当前登录用户
 export function useAuthUser() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, setUser);
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
     return unsub;
   }, []);
-  return user;
+
+  return { user, loading };
 }

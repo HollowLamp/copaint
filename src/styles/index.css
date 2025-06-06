@@ -14,6 +14,13 @@
   --gray-700: #374151;
   --gray-800: #1f2937;
   --gray-900: #111827;
+
+  /* Typography */
+  --font-family-base:
+    AlibabaPuHuiTi, SourceHanSansSC, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-family-heading: ZCOOLKuaiLe, AlibabaPuHuiTi, sans-serif;
+  --font-family-code: Poppins, source-code-pro, Menlo, Monaco, Consolas, monospace;
 }
 
 [data-theme='light'] {
@@ -54,4 +61,20 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'ZCOOLKuaiLe', 'Poppins', 'AlibabaPuHuiTi', 'SourceHanSansSC', sans-serif;
+  font-family: var(--font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-heading);
+}
+
+code {
+  font-family: var(--font-family-code);
 }

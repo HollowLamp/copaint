@@ -1,4 +1,4 @@
-import { Layout, Menu, Input, Space } from 'antd';
+import { Layout, Menu, Input, Space, Dropdown } from 'antd';
 import {
   BookOutlined,
   StarOutlined,
@@ -6,11 +6,13 @@ import {
   HistoryOutlined,
   UserOutlined,
   BulbOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
 import { useTheme } from '../../hooks/ThemeContext';
 import { useNavigate, useLocation, Outlet } from 'react-router';
 import styles from './DashboardPage.module.css';
 import { Button } from '../../components/button/Button';
+import { logout } from '../../services/userService';
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
@@ -52,6 +54,24 @@ export const Component = () => {
     },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('登出失败:', error);
+    }
+  };
+
+  const dropdownItems = [
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: '退出登录',
+      onClick: handleLogout,
+    },
+  ];
+
   return (
     <Layout className={styles.dashboard}>
       <Sider theme={theme} width={200}>
@@ -71,7 +91,10 @@ export const Component = () => {
         <Header className={styles.header}>
           <Space>
             <Search placeholder="搜索" allowClear style={{ width: 200 }} />
-            <BulbOutlined onClick={toggleTheme} />
+            <BulbOutlined onClick={toggleTheme} className={styles.icon} />
+            <Dropdown menu={{ items: dropdownItems }} placement="bottomRight" arrow>
+              <UserOutlined className={styles.icon} />
+            </Dropdown>
           </Space>
         </Header>
         <Content className={styles.content}>

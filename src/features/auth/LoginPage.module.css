@@ -1,0 +1,202 @@
+.container {
+  height: 100vh;
+  display: flex;
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+}
+
+.leftSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  padding: 40px;
+}
+
+.logoWrapper {
+  text-align: center;
+}
+
+.logo {
+  width: 360px;
+  height: auto;
+  margin-bottom: 24px;
+}
+
+.brandName {
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--accent-primary);
+  margin-bottom: 16px;
+  font-family: 'ZCOOLKuaiLe', sans-serif;
+}
+
+.slogan {
+  font-size: 18px;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  opacity: 0.8;
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 400px;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--accent-primary);
+  margin-bottom: 8px;
+  font-family: 'ZCOOLKuaiLe', sans-serif;
+}
+
+.subtitle {
+  text-align: center;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  margin-bottom: 32px;
+}
+
+.form {
+  width: 100%;
+}
+
+.form :global(.ant-input-affix-wrapper) {
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  border-color: light-dark(var(--border-color), var(--accent-secondary));
+}
+
+.form :global(.ant-input-affix-wrapper:hover) {
+  border-color: var(--accent-primary);
+}
+
+.form :global(.ant-input) {
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.remember {
+  text-align: right;
+  margin-bottom: 24px;
+}
+
+.forgotPassword {
+  color: var(--accent-primary);
+  transition: opacity 0.2s;
+}
+
+.forgotPassword:hover {
+  opacity: 0.8;
+}
+
+.submitButton {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 24px;
+}
+
+.footer {
+  text-align: center;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+.footer a {
+  color: var(--accent-primary);
+  margin-left: 8px;
+  transition: opacity 0.2s;
+}
+
+.footer a:hover {
+  opacity: 0.8;
+}
+
+.socialLogin {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.socialButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.socialButton :global(.anticon) {
+  font-size: 16px;
+}
+
+/* Modal 样式 */
+:global(.ant-modal-content) {
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+}
+
+:global(.ant-modal-header) {
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+:global(.ant-modal-title) {
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+:global(.ant-modal-close-x) {
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+/* Modal input styles */
+:global(.ant-modal-root) .form :global(.ant-input-affix-wrapper) {
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  border-color: light-dark(var(--border-color), var(--accent-secondary));
+}
+
+:global(.ant-modal-root) .form :global(.ant-input) {
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+:global(.ant-modal-root) .form :global(.ant-input::placeholder) {
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  opacity: 0.5;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .leftSection {
+    padding: 20px;
+  }
+
+  .logo {
+    width: 120px;
+  }
+
+  .brandName {
+    font-size: 32px;
+  }
+
+  .rightSection {
+    padding: 20px;
+  }
+
+  .formWrapper {
+    padding: 20px;
+  }
+}
