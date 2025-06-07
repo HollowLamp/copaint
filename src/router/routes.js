@@ -40,6 +40,10 @@ export const routes = [
             path: 'profile',
             lazy: () => import('../features/profile/ProfilePage'),
           },
+          {
+            path: 'settings',
+            lazy: () => import('../features/settings/SettingsPage'),
+          },
         ],
       },
     ],

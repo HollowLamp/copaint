@@ -1,4 +1,5 @@
-import { Layout, Menu, Input, Space, Dropdown } from 'antd';
+import { useEffect, useState } from 'react';
+import { Layout, Menu, Input, Space, message } from 'antd';
 import {
   BookOutlined,
   StarOutlined,
@@ -6,13 +7,14 @@ import {
   HistoryOutlined,
   UserOutlined,
   BulbOutlined,
-  LogoutOutlined,
 } from '@ant-design/icons';
 import { useTheme } from '../../hooks/ThemeContext';
 import { useNavigate, useLocation, Outlet } from 'react-router';
 import styles from './DashboardPage.module.css';
 import { Button } from '../../components/button/Button';
-import { logout } from '../../services/userService';
+import { logout, getUserInfo } from '../../services/userService';
+import { UserMenu } from '../../components/usermenu/UserMenu';
+import { useAuthUser } from '../../hooks/useAuthUser';
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
@@ -21,6 +23,16 @@ export const Component = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user: authUser, loading } = useAuthUser();
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    if (authUser?.uid) {
+      getUserInfo(authUser.uid)
+        .then((info) => setNickname(info.nickname ))
+        .catch(() => message.error('无法获取用户昵称'));
+    }
+  }, [authUser]);
 
   const menuItems = [
     {
@@ -47,11 +59,11 @@ export const Component = () => {
       icon: <HistoryOutlined />,
       label: '最近打开',
     },
-    {
-      key: '/profile',
-      icon: <UserOutlined />,
-      label: '个人中心',
-    },
+    // {
+    //   key: '/profile',
+    //   icon: <UserOutlined />,
+    //   label: '个人中心',
+    // },
   ];
 
   const handleLogout = async () => {
@@ -62,15 +74,6 @@ export const Component = () => {
       console.error('登出失败:', error);
     }
   };
-
-  const dropdownItems = [
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: '退出登录',
-      onClick: handleLogout,
-    },
-  ];
 
   return (
     <Layout className={styles.dashboard}>
@@ -92,9 +95,11 @@ export const Component = () => {
           <Space>
             <Search placeholder="搜索" allowClear style={{ width: 200 }} />
             <BulbOutlined onClick={toggleTheme} className={styles.icon} />
-            <Dropdown menu={{ items: dropdownItems }} placement="bottomRight" arrow>
-              <UserOutlined className={styles.icon} />
-            </Dropdown>
+            <UserMenu
+              onLogout={handleLogout}
+              onNavigate={navigate}
+              nickname={nickname}
+            />
           </Space>
         </Header>
         <Content className={styles.content}>

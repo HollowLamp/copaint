@@ -92,9 +92,13 @@ export function subscribeToCollaborationOperations(fileId, callback) {
   });
 }
 
+// 缓存最后清理时间，避免频繁清理
+const lastCleanupCache = new Map();
+
 // 广播协作操作
 export async function broadcastOperation(fileId, userId, operationType, data) {
   try {
+    // 插入新的协作记录
     await addDoc(collection(firestore, 'collaborations'), {
       fileId,
       userId,
@@ -102,6 +106,21 @@ export async function broadcastOperation(fileId, userId, operationType, data) {
       data,
       timestamp: serverTimestamp()
     });
+
+    // 定期清理过期记录（避免频繁清理）
+    const now = Date.now();
+    const lastCleanup = lastCleanupCache.get(fileId) || 0;
+
+    // 每5分钟最多清理一次，或者随机触发（10%概率）
+    if (now - lastCleanup > 300000 || Math.random() < 0.1) {
+      // 异步清理，不阻塞主要操作
+      cleanupExpiredOperations(fileId).then(() => {
+        lastCleanupCache.set(fileId, now);
+        console.log(`已清理文件 ${fileId} 的过期协作记录`);
+      }).catch(error => {
+        console.warn('清理过期协作记录失败:', error);
+      });
+    }
   } catch (error) {
     console.error('广播操作失败:', error);
     throw error;
@@ -444,18 +463,81 @@ function generateShareCode() {
 }
 
 // 清理过期的协作操作记录
-export async function cleanupExpiredOperations(fileId) {
-  const operationsRef = collection(firestore, 'collaborations');
-  const q = query(
-    operationsRef,
-    where('fileId', '==', fileId),
-    where('timestamp', '<', new Date(Date.now() - 3600000)) // 1小时前的记录
-  );
+export async function cleanupExpiredOperations(fileId, maxAgeHours = 1) {
+  try {
+    const operationsRef = collection(firestore, 'collaborations');
+    const expiredTime = new Date(Date.now() - maxAgeHours * 3600000);
 
-  const snapshot = await getDocs(q);
-  const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+    const q = query(
+      operationsRef,
+      where('fileId', '==', fileId),
+      where('timestamp', '<', expiredTime),
+      limit(100) // 限制每次删除的数量，避免一次性删除过多
+    );
 
-  await Promise.all(deletePromises);
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return 0; // 没有过期记录
+    }
+
+    // 批量删除
+    const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+
+    const deletedCount = snapshot.docs.length;
+    console.log(`已删除 ${deletedCount} 条过期协作记录 (文件: ${fileId})`);
+
+    // 如果删除了100条记录，可能还有更多，递归继续清理
+    if (deletedCount === 100) {
+      const additionalDeleted = await cleanupExpiredOperations(fileId, maxAgeHours);
+      return deletedCount + additionalDeleted;
+    }
+
+    return deletedCount;
+  } catch (error) {
+    console.error('清理过期协作记录失败:', error);
+    throw error;
+  }
+}
+
+// 全局清理所有过期的协作操作记录
+export async function cleanupAllExpiredOperations(maxAgeHours = 2) {
+  try {
+    const operationsRef = collection(firestore, 'collaborations');
+    const expiredTime = new Date(Date.now() - maxAgeHours * 3600000);
+
+    const q = query(
+      operationsRef,
+      where('timestamp', '<', expiredTime),
+      limit(500) // 每次最多清理500条记录
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      console.log('没有发现过期的协作记录');
+      return 0;
+    }
+
+    // 批量删除
+    const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+
+    const deletedCount = snapshot.docs.length;
+    console.log(`全局清理完成，已删除 ${deletedCount} 条过期协作记录`);
+
+    // 如果删除了500条记录，可能还有更多，递归继续清理
+    if (deletedCount === 500) {
+      const additionalDeleted = await cleanupAllExpiredOperations(maxAgeHours);
+      return deletedCount + additionalDeleted;
+    }
+
+    return deletedCount;
+  } catch (error) {
+    console.error('全局清理过期协作记录失败:', error);
+    throw error;
+  }
 }
 
 export default {
@@ -473,5 +555,6 @@ export default {
   getOnlineCollaborators,
   getUserDetails,
   getUsersDetails,
-  cleanupExpiredOperations
+  cleanupExpiredOperations,
+  cleanupAllExpiredOperations
 };
