@@ -13,6 +13,7 @@ import {
 import * as userService from '../../services/userService';
 import * as fileService from '../../services/fileService';
 import { auth } from '../../services/firebase';
+import { useNavigate } from 'react-router';
 
 const SORT_OPTIONS = [
   { label: '按最近打开时间排序', value: 'lastOpenTime' },
@@ -23,6 +24,7 @@ const SORT_OPTIONS = [
 
 export const Component = () => {
   const { message } = App.useApp();
+  const navigate = useNavigate();
   const [recentlyOpened, setRecentlyOpened] = useState([]);
   const [sortBy, setSortBy] = useState('lastOpenTime');
   const [ascending, setAscending] = useState(false); // 默认按最近打开时间倒序
@@ -42,6 +44,7 @@ export const Component = () => {
         return;
       }
       const recentFiles = await userService.getRecentFiles(uid);
+      // const recentFiles = await userService.getFavorites(uid);      
       console.log("最近打开的文件:", recentFiles);
       if (!Array.isArray(recentFiles) || recentFiles.length === 0) {
         setRecentlyOpened([]);
@@ -179,7 +182,7 @@ export const Component = () => {
               extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
               actions={[
                 <Button size="small" danger onClick={() => handleDelete(file.id)}>删除</Button>,
-                <Button size="small" type="primary">打开</Button>
+                <Button size="small" type="primary" onClick={() => navigate(`/canvas/${file.id}`)}> 打开</Button>
               ]}
             >
               <p>最近打开时间：{file.lastOpenTime?.toDate?.().toLocaleString?.() || '—'}</p>
