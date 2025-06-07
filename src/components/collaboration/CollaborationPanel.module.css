@@ -1,0 +1,400 @@
+.collaborationPanel {
+  position: fixed;
+  top: 60px;
+  right: 10px;
+  width: 350px;
+  max-height: 80vh;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 8px;
+  box-shadow: 0 4px 16px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+  z-index: 1000;
+  overflow: hidden;
+  font-family: var(--font-family-base);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+}
+
+.content {
+  max-height: calc(80vh - 60px);
+  overflow-y: auto;
+}
+
+.section {
+  padding: 16px 20px;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+/* 在线用户 */
+.onlineUsers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onlineUser {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  border-radius: 6px;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.userId {
+  font-size: 13px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.onlineIndicator {
+  width: 8px;
+  height: 8px;
+  background: #00ff00;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.emptyText {
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+/* 协作者列表 */
+.collaboratorsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.collaborator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  border-radius: 6px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.userRole {
+  font-size: 11px;
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.permission {
+  font-size: 11px;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userStatus {
+  display: flex;
+  align-items: center;
+}
+
+.removeButton {
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.removeButton:hover {
+  background: #ff3742;
+}
+
+/* 添加协作者 */
+.addCollaborator {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userIdInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  font-size: 14px;
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.userIdInput:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.permissionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.addButton {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--accent-primary);
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: var(--accent-primary);
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addButton:hover {
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+/* 分享设置 */
+.shareSettings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shareButton {
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareButton:hover {
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+.shareForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  border-radius: 6px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+.shareOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.permissionSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.permissionSelect label {
+  font-size: 13px;
+  font-weight: 500;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.permissionDropdown {
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.permissionDropdown:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.passwordInput input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  font-size: 14px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.passwordInput input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.generateButton {
+  padding: 10px 16px;
+  border: none;
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.generateButton:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.generateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.shareResult {
+  margin-top: 12px;
+}
+
+.shareResult p {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.shareLink {
+  display: flex;
+  gap: 8px;
+}
+
+.shareLinkInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  font-size: 12px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  font-family: monospace;
+}
+
+.copyButton {
+  padding: 8px 12px;
+  border: 1px solid var(--accent-primary);
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: var(--accent-primary);
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.copyButton:hover {
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+/* 滚动条样式 */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: light-dark(var(--accent-primary), var(--accent-hover));
+}
