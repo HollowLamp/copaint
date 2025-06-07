@@ -1,56 +1,63 @@
 .pageContainer {
-    position: relative;
-    padding: 20px;
-  }
+  position: relative;
+  padding: 20px;
+  background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
 /* 菜单容器 */
 .menuContainer {
-position: relative;
-display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .menuButton {
-font-size: 24px;
-height: 50px;
-width: 50px;
-padding: 5px;
-cursor: pointer;
-background: white;
-border: 1px solid #ccc;
-border-radius: 4px;
+  font-size: 24px;
+  height: 50px;
+  width: 50px;
+  padding: 5px;
+  cursor: pointer;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .menuBox {
-position: absolute;
-top: 50px;
-left: 0;
-width: 150px;
-height: auto;
-background-color: #fff;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-border-radius: 8px;
-padding: 10px 0;
-z-index: 1000;
-font-size:small;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 150px;
+  height: auto;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  box-shadow: 0 4px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 8px;
+  padding: 10px 0;
+  z-index: 1000;
+  font-size: small;
 }
 
 .menuBox ul {
-list-style: none;
-padding: 0;
-margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .menuBox li {
-padding: 5px 10px;
-cursor: pointer;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .menuBox li:hover {
-background-color: #f0f0f0;
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
-  
-  .content {
-    margin-top: 30px;
-  }
+
+.content {
+  margin-top: 30px;
+}
 
 /* 画布工具容器 */
 .toolbarContainer {
@@ -58,8 +65,8 @@ background-color: #f0f0f0;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: #fff;
-  border: 1px solid #ccc;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -73,126 +80,482 @@ background-color: #f0f0f0;
   cursor: pointer;
   font-size: 20px;
   padding: 6px 10px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .verticalDivider {
   width: 1px;
   height: 24px;
-  background-color: #ccc;
+  background-color: light-dark(var(--border-color), var(--accent-secondary));
   margin: 0 4px;
 }
 
-/* 画布右上角按钮容器：分享、素材库 */
-  .rightButtons {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 10px;
-  }
-  .rightButtons button {
-    background: white !important;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 6px 12px;
-    font-weight: 500;
-    transition: all 0.2s ease;
+/* 属性面板 */
+.propertyPanel {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  width: 280px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 8px;
+  box-shadow: 0 4px 12px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+  z-index: 1000;
+  max-height: 80vh;
+  overflow-y: auto;
+}
 
-  }
-  .rightButtons button:hover {
-    background: #f0f0f0 !important  ;
-    transform: translateY(-1px);
-  }
+.propertyPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+  border-radius: 8px 8px 0 0;
+}
+
+.propertyPanelHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.propertyPanelHeader button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.propertyPanelHeader button:hover {
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.propertySection {
+  padding: 16px;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+.propertySection:last-child {
+  border-bottom: none;
+}
+
+.propertySection h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+/* 颜色网格 */
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.colorButton {
+  width: 28px;
+  height: 28px;
+  border: 2px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.colorButton:hover {
+  border-color: light-dark(var(--accent-primary), var(--accent-hover));
+  transform: scale(1.1);
+}
+
+/* 自选颜色按钮 */
+.customColorButton {
+  width: 28px;
+  height: 28px;
+  border: 2px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg,
+      #ff0000 0%, #ff7f00 14%, #ffff00 28%,
+      #00ff00 42%, #0000ff 57%, #4b0082 71%,
+      #9400d3 85%, #ff0000 100%);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.customColorButton:hover {
+  border-color: light-dark(var(--accent-primary), var(--accent-hover));
+  transform: scale(1.1);
+}
+
+.colorPicker {
+  background: light-dark(rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0.8));
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+/* 字体选择器优化 */
+.fontSelect {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  font-size: 14px;
+  max-height: 150px;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.fontSelect option {
+  padding: 4px 8px;
+  font-size: 14px;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.fontSelect optgroup {
+  font-weight: bold;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+/* 字体预览 */
+.fontPreview {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary));
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.fontPreview span {
+  font-size: 16px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 滑块样式 */
+.propertySection input[type="range"] {
+  width: 100%;
+  margin: 8px 0;
+}
+
+.propertySection span {
+  font-size: 12px;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+/* 选择框样式 */
+.propertySection select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  font-size: 14px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+/* 对齐按钮 */
+.alignButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.alignButtons button {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alignButtons button:hover {
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+.alignButtons button.active {
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  border-color: var(--accent-primary);
+}
+
+/* 层级按钮 */
+.layerButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.layerButtons button {
+  padding: 8px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.layerButtons button:hover {
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+/* 画布右上角按钮容器：分享、素材库 */
+.rightButtons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.rightButtons button {
+  background: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+}
+
+.rightButtons button:hover {
+  background: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
+  transform: translateY(-1px);
+}
+
 /* 画布左下侧按钮组：缩放、重做、撤销 */
-  .bottomLeft {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    display: flex;
-    gap: 8px;
-  }
-  
+.bottomLeft {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  gap: 8px;
+}
+
 /* 画布右下侧按钮组：问题 */
-  .bottomRight {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-  }
-  
-  .cornerButton {
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 18px;
-    padding: 6px 10px;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: background 0.2s ease;
-  }
-  
-  .cornerButton:hover {
-    background-color: #f0f0f0;
-  }
+.bottomRight {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.cornerButton {
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  border-radius: 6px;
+  font-size: 18px;
+  padding: 6px 10px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  transition: background 0.2s ease;
+}
+
+.cornerButton:hover {
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
 /* 画布左下侧缩放按钮 */
-  .ZoomButton {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 20px auto; /* 居中对齐 */
-    position: absolute;
-    bottom: 5px;
-    left: 10px;
+.ZoomButton {
+  display: flex;
+  align-items: center;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 4px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  margin: 20px auto;
+  /* 居中对齐 */
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
 }
 
 .ZoomButton button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px 10px;
-    color: #333;
-    margin: 0; /* 移除外边距 */
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  margin: 0;
+  /* 移除外边距 */
 }
 
 .ZoomButton .value {
-    margin: 0 10px;
-    font-size: 16px;
-    color: #333;
-    min-width: 40px; /* 设置最小宽度 */
-    display: inline-block; /* 使min-width生效 */
-    text-align: center; /* 居中对齐文本 */
+  margin: 0 10px;
+  font-size: 16px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  min-width: 40px;
+  /* 设置最小宽度 */
+  display: inline-block;
+  /* 使min-width生效 */
+  text-align: center;
+  /* 居中对齐文本 */
 }
 
 .ZoomButton button:hover {
-    background-color: #e0e0e0;
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary));
 }
+
 /* 画布左下侧撤销重做按钮 */
 .UndoRedoButton {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 20px auto; /* 居中对齐 */
-    position: absolute;
-    bottom: 5px;
-    left: 150px;
+  display: flex;
+  align-items: center;
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 4px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  margin: 20px auto;
+  /* 居中对齐 */
+  position: absolute;
+  bottom: 5px;
+  left: 150px;
 }
+
 .UndoRedoButton button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px 10px;
-    color: #333;
-    margin: 0; /* 移除外边距 */
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  margin: 0;
+  /* 移除外边距 */
 }
+
 .UndoRedoButton button:hover {
-    background-color: #e0e0e0 ;
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+/* 形状选择菜单 */
+.shapeMenu {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  gap: 8px;
+  box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  z-index: 1001;
+}
+
+.shapeMenu button {
+  padding: 6px 12px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.shapeMenu button:hover {
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+  border-color: light-dark(var(--accent-primary), var(--accent-hover));
+}
+
+/* 文字样式按钮 */
+.textStyleButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.textStyleButtons button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.textStyleButtons button:hover {
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+}
+
+.textStyleButtons button.active {
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  border-color: var(--accent-primary);
+}
+
+/* 最近使用的颜色 */
+.recentTitle {
+  margin: 8px 0 6px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+}
+
+.recentColors {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.recentColorButton {
+  width: 24px;
+  height: 24px;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.recentColorButton:hover {
+  border-color: light-dark(var(--accent-primary), var(--accent-hover));
+  transform: scale(1.1);
 }
