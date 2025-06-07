@@ -13,6 +13,7 @@ import {
 import * as userService from '../../services/userService';
 import * as fileService from '../../services/fileService';
 import { auth } from '../../services/firebase';
+import { useNavigate } from 'react-router';
 
 
 const SORT_OPTIONS = [
@@ -24,6 +25,7 @@ const SORT_OPTIONS = [
 
 export const Component = () => {
   const{message}=App.useApp();
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [sortBy, setSortBy] = useState('favoriteTime');
   const [ascending, setAscending] = useState(true);
@@ -179,7 +181,14 @@ export const Component = () => {
               extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
               actions={[
                 <Button size="small" danger onClick={() => handleUnfavorite(file.id)}>已收藏</Button>,
-                <Button size="small" type="primary">打开</Button>
+                <Button
+  size="small"
+  type="primary"
+  onClick={() => navigate(`/canvas/${file.id}`)}
+> 
+  打开
+</Button>
+
               ]}
             >
               <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
