@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message } from 'antd';
+import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal,App } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -14,7 +14,7 @@ import * as userService from '../../services/userService';
 import * as fileService from '../../services/fileService';
 import { auth } from '../../services/firebase';
 
-// 🔄 收藏夹排序方式
+
 const SORT_OPTIONS = [
   { label: '按收藏时间排序', value: 'favoriteTime' },
   { label: '按创建时间排序', value: 'createTime' },
@@ -23,60 +23,48 @@ const SORT_OPTIONS = [
 ];
 
 export const Component = () => {
-  const [favorites, setFavorites] = useState([]); // 收藏的文件详情
-  const [sortBy, setSortBy] = useState('favoriteTime'); // 当前排序方式
-  const [ascending, setAscending] = useState(true); // 正序 or 倒序
-  const [search, setSearch] = useState(''); // 搜索关键词
+  const{message}=App.useApp();
+  const [favorites, setFavorites] = useState([]);
+  const [sortBy, setSortBy] = useState('favoriteTime');
+  const [ascending, setAscending] = useState(true);
+  const [search, setSearch] = useState('');
+  const [renamingFile, setRenamingFile] = useState(null);
+  const [newName, setNewName] = useState('');
 
-  // ✅ 组件加载时，从后端拉取收藏的文件列表
   useEffect(() => {
     fetchFavorites();
   }, []);
 
-  // 🚀 获取当前用户收藏的文件列表并取出详情
   const fetchFavorites = async () => {
     try {
       const uid = auth.currentUser?.uid;
-  
       if (!uid) {
         message.error("用户未登录");
         return;
       }
-     
-      console.log("当前用户 uid:", uid);
-      // 1. 获取收藏的文件ID数组
       const favs = await userService.getFavorites(uid);
-      console.log("✅ 收藏的文件ID:", favs); // 应该是 ['xxx', 'yyy']
-  
       if (!Array.isArray(favs) || favs.length === 0) {
-        setFavorites([]); // 没有收藏内容
+        setFavorites([]);
         return;
       }
-  
-      // 2. 获取每个文件的详情
       const files = await Promise.all(
         favs.map(async (fileId) => {
           const file = await fileService.getFileContent(fileId);
-          console.log("123",file);
           return {
             ...file,
-            id: fileId,              // 保留 fileId 用于删除等操作
+            id: fileId,
           };
         })
       );
-  
-      console.log("✅ 收藏的文件详情:", files);
-      setFavorites(files); // 存入状态
+      setFavorites(files);
     } catch (err) {
       console.error("❌ 加载收藏夹失败:", err);
       message.error("加载收藏夹失败");
     }
   };
-  
 
-  // 🧠 处理排序
   const sortedFavorites = [...favorites]
-    .filter(file => file.fileName.includes(search)) // 🔍 搜索过滤
+    .filter(file => file.fileName.includes(search))
     .sort((a, b) => {
       const valA = a[sortBy];
       const valB = b[sortBy];
@@ -85,25 +73,63 @@ export const Component = () => {
       return 0;
     });
 
-  // ❌ 从收藏夹移除文件
   const handleUnfavorite = async (fileId) => {
     try {
       const uid = auth.currentUser?.uid;
       await userService.removeFavorite(uid, fileId);
       message.success("已取消收藏");
-      fetchFavorites(); // 刷新列表
+      fetchFavorites();
     } catch (err) {
       console.error(err);
       message.error("操作失败");
     }
   };
 
-  // 📋 卡片右上角更多操作菜单
+  const handleRename = async () => {
+    if (!newName.trim()) return;
+    try {
+      await fileService.renameFile(renamingFile.id, newName.trim());
+      message.success("重命名成功");
+      setRenamingFile(null);
+      setNewName('');
+      fetchFavorites();
+    } catch (err) {
+      console.error(err);
+      message.error("重命名失败");
+    }
+  };
+
+  const handleCopyLink = async (fileId) => {
+    try {
+      const link = await fileService.getFileShareLink(fileId);
+      await navigator.clipboard.writeText(link);
+      message.success("链接已复制");
+    } catch (err) {
+      console.error(err);
+      message.error("复制失败");
+    }
+  };
+
+  const handleCopyFile = async (fileId) => {
+    try {
+      await fileService.copyFile(fileId);
+      message.success("已创建副本");
+      fetchFavorites();
+    } catch (err) {
+      console.error(err);
+      message.error("创建副本失败");
+    }
+  };
+
   const renderMenu = (file) => (
     <Menu>
+      <Menu.Item icon={<EditOutlined />} onClick={() => {
+        setRenamingFile(file);
+        setNewName(file.fileName || '');
+      }}>重命名</Menu.Item>
       <Menu.Item icon={<ShareAltOutlined />}>分享</Menu.Item>
-      <Menu.Item icon={<LinkOutlined />}>复制链接</Menu.Item>
-      <Menu.Item icon={<CopyOutlined />}>创建副本</Menu.Item>
+      <Menu.Item icon={<LinkOutlined />} onClick={() => handleCopyLink(file.id)}>复制链接</Menu.Item>
+      <Menu.Item icon={<CopyOutlined />} onClick={() => handleCopyFile(file.id)}>创建副本</Menu.Item>
       <Menu.Item icon={<SwapOutlined />}>转移所有权</Menu.Item>
       <Menu.Item danger icon={<DeleteOutlined />} onClick={() => handleUnfavorite(file.id)}>
         删除
@@ -113,7 +139,6 @@ export const Component = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      {/* 顶部操作区 */}
       <Space style={{ marginBottom: 20 }}>
         <Radio.Group
           options={SORT_OPTIONS}
@@ -138,7 +163,6 @@ export const Component = () => {
         />
       </Space>
 
-      {/* 文件卡片列表 */}
       <Row gutter={[16, 16]}>
         {sortedFavorites.map((file) => (
           <Col key={file.id} span={6}>
@@ -146,7 +170,10 @@ export const Component = () => {
               title={
                 <span>
                   {file.fileName || '未命名'}
-                  <EditOutlined style={{ marginLeft: 8 }} />
+                  <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
+                    setRenamingFile(file);
+                    setNewName(file.fileName || '');
+                  }} />
                 </span>
               }
               extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
@@ -158,15 +185,30 @@ export const Component = () => {
               <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>修改时间：{file.updateTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{file.fileName || '未知'}</p>
+              <p>文件归属：{file.ownerName || '未知'}</p>
             </Card>
           </Col>
         ))}
       </Row>
-      {sortedFavorites.length === 0 && (
-  <p style={{ color: '#999', textAlign: 'center' }}>暂无收藏内容</p>
-)}
 
+      {sortedFavorites.length === 0 && (
+        <p style={{ color: '#999', textAlign: 'center' }}>暂无收藏内容</p>
+      )}
+
+      <Modal
+        title="重命名文件"
+        open={!!renamingFile}
+        onCancel={() => setRenamingFile(null)}
+        onOk={handleRename}
+        okText="确定"
+        cancelText="取消"
+      >
+        <Input
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          placeholder="请输入新文件名"
+        />
+      </Modal>
     </div>
   );
 };
