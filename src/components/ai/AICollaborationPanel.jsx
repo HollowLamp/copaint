@@ -7,7 +7,7 @@ import { generateAIImage, editAIImage, testAPIConnection } from '../../services/
 const { TextArea } = Input;
 const { Option } = Select;
 
-export const AICollaborationPanel = ({ onClose, editor, fileId }) => {
+export const AICollaborationPanel = ({ onClose, editor, fileId, dragRef, onMouseDown }) => {
   const { message } = App.useApp();
   const [activeTab, setActiveTab] = useState('generate');
   const [loading, setLoading] = useState(false);
@@ -346,8 +346,8 @@ export const AICollaborationPanel = ({ onClose, editor, fileId }) => {
   ];
 
   return (
-    <div className={styles.aiPanel}>
-      <div className={styles.header}>
+    <div className={styles.aiPanel} onMouseDown={onMouseDown}>
+      <div ref={dragRef} className={styles.header}>
         <h3>AI协作助手</h3>
         <Button
           type="text"

@@ -1,14 +1,10 @@
 .collaborationPanel {
-  position: fixed;
-  top: 60px;
-  right: 10px;
   width: 350px;
   max-height: 80vh;
   background: light-dark(var(--bg-secondary), var(--bg-primary));
   border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
   border-radius: 8px;
   box-shadow: 0 4px 16px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
-  z-index: 1000;
   overflow: hidden;
   font-family: var(--font-family-base);
 }
@@ -20,6 +16,12 @@
   padding: 16px 20px;
   border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
   background: light-dark(var(--accent-secondary), var(--accent-primary));
+  cursor: grab;
+  user-select: none;
+}
+
+.header:active {
+  cursor: grabbing;
 }
 
 .header h3 {

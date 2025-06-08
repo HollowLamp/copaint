@@ -12,6 +12,8 @@ import { useCollaboration } from '../../hooks/useCollaboration';
 import { CollaborationPanel } from '../../components/collaboration/CollaborationPanel';
 import { AICollaborationPanel } from '../../components/ai/AICollaborationPanel';
 import { SharePanel } from '../../components/share/SharePanel';
+import { DraggablePanel } from '../../components/common/DraggablePanel';
+import { MaterialLibraryPanel } from '../../components/material/MaterialLibraryPanel';
 import { joinByShareLink } from '../../services/collaborationService';
 import { firestore } from '../../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -35,6 +37,7 @@ export const Component = () => {
   const [showCollaborationPanel, setShowCollaborationPanel] = useState(false);
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
+  const [showMaterialPanel, setShowMaterialPanel] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [recentColors, setRecentColors] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
@@ -956,10 +959,6 @@ export const Component = () => {
                 <img src="/imgs/trash-solid.jpg" alt="图标" style={{ width: '16px', height: '15px', marginRight: '10px', marginLeft: '5px', verticalAlign: 'middle', objectFit: 'contain' }} />
                 重置画布
               </li>
-              <li onClick={() => handleMenuOption('评论')}>
-                <img src="/imgs/comment-regular.jpg" alt="图标" style={{ width: '16px', height: '15px', marginRight: '10px', marginLeft: '5px', verticalAlign: 'middle', objectFit: 'contain' }} />
-                评论
-              </li>
             </ul>
             <hr />
             <ul>
@@ -1000,30 +999,54 @@ export const Component = () => {
 
       {/* 协作面板 */}
       {showCollaborationPanel && (
-        <CollaborationPanel
-          fileId={fileId}
-          collaborators={collaboration.collaborators}
-          ownerId={collaboration.ownerId}
-          onClose={() => setShowCollaborationPanel(false)}
-        />
+        <DraggablePanel
+          initialPosition={{ x: window.innerWidth - 370, y: 60 }}
+        >
+          <CollaborationPanel
+            fileId={fileId}
+            collaborators={collaboration.collaborators}
+            ownerId={collaboration.ownerId}
+            onClose={() => setShowCollaborationPanel(false)}
+          />
+        </DraggablePanel>
       )}
 
       {/* AI协作面板 */}
       {showAIPanel && (
-        <AICollaborationPanel
-          editor={editor}
-          fileId={fileId}
-          onClose={() => setShowAIPanel(false)}
-        />
+        <DraggablePanel
+          initialPosition={{ x: window.innerWidth - 400, y: window.innerHeight * 0.1 }}
+        >
+          <AICollaborationPanel
+            editor={editor}
+            fileId={fileId}
+            onClose={() => setShowAIPanel(false)}
+          />
+        </DraggablePanel>
       )}
 
       {/* 分享面板 */}
       {showSharePanel && (
-        <SharePanel
-          fileId={fileId}
-          ownerId={collaboration.ownerId}
-          onClose={() => setShowSharePanel(false)}
-        />
+        <DraggablePanel
+          initialPosition={{ x: window.innerWidth - 370, y: 60 }}
+        >
+          <SharePanel
+            fileId={fileId}
+            ownerId={collaboration.ownerId}
+            onClose={() => setShowSharePanel(false)}
+          />
+        </DraggablePanel>
+      )}
+
+      {/* 素材库面板 */}
+      {showMaterialPanel && (
+        <DraggablePanel
+          initialPosition={{ x: window.innerWidth - 440, y: 60 }}
+        >
+          <MaterialLibraryPanel
+            editor={editor}
+            onClose={() => setShowMaterialPanel(false)}
+          />
+        </DraggablePanel>
       )}
 
       {/* 右上角按钮 - 漂浮在画板上 */}
@@ -1032,7 +1055,7 @@ export const Component = () => {
           <img src="/imgs/share-nodes-solid.png" alt="图标" style={{ width: '13px', height: '15px', marginRight: '6px', verticalAlign: 'middle' }} />
           分享
         </Button>
-        <Button onClick={() => message.info('素材库功能正在开发中')}>
+        <Button onClick={() => setShowMaterialPanel(!showMaterialPanel)}>
           <img src='/imgs/store-solid.jpg' alt="图标" style={{ width: '16px', height: '15px', marginRight: '6px', verticalAlign: 'middle' }} />
           素材库
         </Button>

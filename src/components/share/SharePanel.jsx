@@ -7,7 +7,9 @@ import styles from './SharePanel.module.css';
 export const SharePanel = ({
   fileId,
   ownerId,
-  onClose
+  onClose,
+  dragRef,
+  onMouseDown
 }) => {
   const { message } = App.useApp();
   const [shareLink, setShareLink] = useState('');
@@ -45,8 +47,8 @@ export const SharePanel = ({
   };
 
   return (
-    <div className={styles.sharePanel}>
-      <div className={styles.header}>
+    <div className={styles.sharePanel} onMouseDown={onMouseDown}>
+      <div ref={dragRef} className={styles.header}>
         <h3>分享画布</h3>
         <button onClick={onClose} className={styles.closeButton}>×</button>
       </div>

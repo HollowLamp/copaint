@@ -15,7 +15,9 @@ export const CollaborationPanel = ({
   fileId,
   collaborators = [],
   ownerId,
-  onClose
+  onClose,
+  dragRef,
+  onMouseDown
 }) => {
   const { message } = App.useApp();
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -139,8 +141,8 @@ export const CollaborationPanel = ({
   };
 
   return (
-    <div className={styles.collaborationPanel}>
-      <div className={styles.header}>
+    <div className={styles.collaborationPanel} onMouseDown={onMouseDown}>
+      <div ref={dragRef} className={styles.header}>
         <h3>协作管理</h3>
         <button onClick={onClose} className={styles.closeButton}>×</button>
       </div>
