@@ -32,22 +32,27 @@ export const MaterialLibraryPanel = ({
 
   // 生成图片批次
   const generateImageBatch = (batchNum) => {
-    // 每批12张图片，使用不同的起始索引确保每批都不同
-    const startIndex = (batchNum - 1) * 12;
+    // 每批12张图片，真正随机选择不重复的ID
+    const usedIds = new Set();
     const batchIds = [];
 
-    // 从ID池中选择12个不重复的ID
-    for (let i = 0; i < 12; i++) {
-      const idIndex = (startIndex + i) % imageIdPool.length;
-      batchIds.push(imageIdPool[idIndex]);
+    // 随机选择12个不重复的ID
+    while (batchIds.length < 12 && usedIds.size < imageIdPool.length) {
+      const randomIndex = Math.floor(Math.random() * imageIdPool.length);
+      const imageId = imageIdPool[randomIndex];
+
+      if (!usedIds.has(imageId)) {
+        usedIds.add(imageId);
+        batchIds.push(imageId);
+      }
     }
 
     return batchIds.map((imageId, index) => ({
-      id: `image-batch-${batchNum}-${index}`,
+      id: `image-batch-${batchNum}-${index}-${Date.now()}`, // 添加时间戳确保唯一性
       imageId: imageId, // 保存固定的图片ID
       url: `https://picsum.photos/id/${imageId}/300/200`,
       fullUrl: `https://picsum.photos/id/${imageId}/1200/800`,
-      alt: `素材图片 ${startIndex + index + 1}`,
+      alt: `素材图片 ${imageId}`,
       author: 'Picsum Photos'
     }));
   };
@@ -68,7 +73,9 @@ export const MaterialLibraryPanel = ({
 
   // 换一批图片
   const handleRefresh = () => {
-    const nextBatch = batchNumber + 1;
+    // 增加随机跳跃，避免太规律
+    const jumpSize = Math.floor(Math.random() * 3) + 1; // 随机跳1-3个批次
+    const nextBatch = batchNumber + jumpSize;
     setBatchNumber(nextBatch);
     loadImages(nextBatch);
   };
@@ -91,9 +98,11 @@ export const MaterialLibraryPanel = ({
     }
   };
 
-  // 初始加载
+  // 初始加载 - 从随机批次开始
   useEffect(() => {
-    loadImages(1);
+    const randomStartBatch = Math.floor(Math.random() * 10) + 1; // 随机从1-10批次开始
+    setBatchNumber(randomStartBatch);
+    loadImages(randomStartBatch);
   }, []);
 
 
