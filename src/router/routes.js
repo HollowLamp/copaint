@@ -17,12 +17,8 @@ export const routes = [
         lazy: () => import('../features/dashboard/DashboardPage'),
         children: [
           {
-            path: 'manuscripts/forest',
-            lazy: () => import('../features/manuscripts/ForestPage'),
-          },
-          {
-            path: 'manuscripts/mountains',
-            lazy: () => import('../features/manuscripts/MountainsPage'),
+            path: 'manuscripts',
+            lazy: () => import('../features/manuscripts/ManuscriptsPage'),
           },
           {
             path: 'favorites',

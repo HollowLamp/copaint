@@ -39,10 +39,6 @@ export const Component = () => {
       key: '/manuscripts',
       icon: <BookOutlined />,
       label: '绘画手稿',
-      children: [
-        { key: '/manuscripts/forest', label: '森林物语' },
-        { key: '/manuscripts/mountains', label: '山地公苑' },
-      ],
     },
     {
       key: '/favorites',
