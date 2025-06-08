@@ -20,7 +20,7 @@ const SORT_OPTIONS = [
   { label: '按收藏时间排序', value: 'favoriteTime' },
   { label: '按创建时间排序', value: 'createTime' },
   { label: '按修改时间排序', value: 'lastEditTime' },
-  { label: '按首字母排序', value: 'name' },
+  { label: '按首字母排序', value: 'fileName' },
 ];
 
 export const Component = () => {
@@ -83,7 +83,7 @@ export const Component = () => {
     favoriteTime: 'favoriteTime',
     createTime: 'createTime',
     lastEditTime: 'lastEditTime',  // 修改点
-    name: 'fileName',            // 修改点
+    fileName: 'fileName',            // 修改点
   };
 
   const sortedFavorites = [...favorites]
@@ -93,13 +93,30 @@ export const Component = () => {
     const valA = a[field];
     const valB = b[field];
 
-    // Firebase Timestamp 对象处理
-    const getSortableValue = (v) =>
-      v?.toDate?.() instanceof Date ? v.toDate().getTime() : v?.toLowerCase?.() || v || '';
+    // 改进后的排序值获取逻辑
+    const getSortableValue = (v) => {
+      // 处理时间类型
+      if (field.includes('Time') && v?.toDate) {
+        return v.toDate().getTime();
+      }
+      // 处理文件名（支持中文）
+      if (field === 'fileName') {
+        return v?.toString() || '';
+      }
+      return v?.toString()?.toLowerCase() || '';
+    };
 
     const aVal = getSortableValue(valA);
     const bVal = getSortableValue(valB);
 
+    // 使用 localeCompare 进行字符串比较
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      return ascending 
+        ? aVal.localeCompare(bVal, 'zh-Hans-CN') 
+        : bVal.localeCompare(aVal, 'zh-Hans-CN');
+    }
+
+    // 数值比较
     if (aVal < bVal) return ascending ? -1 : 1;
     if (aVal > bVal) return ascending ? 1 : -1;
     return 0;
@@ -110,7 +127,7 @@ export const Component = () => {
     try {
       const uid = auth.currentUser?.uid;
       await userService.removeFavorite(uid, fileId);
-      message.success("已取消收藏");
+      message.success("已取消收藏");  
       fetchFavorites();
     } catch (err) {
       console.error(err);

@@ -30,6 +30,7 @@ export async function register(email, password, nickname = '') {
     nickname: nickname || `用户_${Math.random().toString(36).slice(2, 8)}`,
     createTime: serverTimestamp(),
     favorites: [],
+    favoriteTimes: [],
     recents: [],
     theme: 'light',
     messages: [],
