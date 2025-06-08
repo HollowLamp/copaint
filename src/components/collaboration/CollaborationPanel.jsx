@@ -4,7 +4,6 @@ import { auth } from '../../services/firebase';
 import {
   addCollaborator,
   removeCollaborator,
-  generateShareLink,
   getOnlineCollaborators,
   getUsersDetails,
   getUserDetails,
@@ -23,12 +22,7 @@ export const CollaborationPanel = ({
   const [onlineUsersDetails, setOnlineUsersDetails] = useState([]);
   const [ownerDetails, setOwnerDetails] = useState(null);
   const [collaboratorsDetails, setCollaboratorsDetails] = useState([]);
-  const [shareLink, setShareLink] = useState('');
-  const [sharePassword, setSharePassword] = useState('');
-  const [sharePermission, setSharePermission] = useState('read');
   const [newCollaboratorId, setNewCollaboratorId] = useState('');
-  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
-  const [showShareSettings, setShowShareSettings] = useState(false);
 
   const currentUser = auth.currentUser;
   const isOwner = currentUser?.uid === ownerId;
@@ -127,21 +121,7 @@ export const CollaborationPanel = ({
     }
   };
 
-  // 生成分享链接
-  const handleGenerateShareLink = async () => {
-    setIsGeneratingLink(true);
-    try {
-      const link = await generateShareLink(fileId, currentUser.uid, sharePassword, sharePermission);
-      setShareLink(link);
-      // 复制到剪贴板
-      navigator.clipboard.writeText(link);
-      message.success(`分享链接已生成并复制到剪贴板！权限级别: ${getPermissionText(sharePermission)}`);
-    } catch (error) {
-      message.error('生成分享链接失败: ' + error.message);
-    } finally {
-      setIsGeneratingLink(false);
-    }
-  };
+
 
   // 获取权限文本
   const getPermissionText = (permission) => {
@@ -269,73 +249,7 @@ export const CollaborationPanel = ({
           </div>
         )}
 
-        {/* 分享设置 (仅所有者可见) */}
-        {isOwner && (
-          <div className={styles.section}>
-            <h4>分享设置</h4>
-            <div className={styles.shareSettings}>
-              <button
-                onClick={() => setShowShareSettings(!showShareSettings)}
-                className={styles.shareButton}
-              >
-                {showShareSettings ? '隐藏分享设置' : '显示分享设置'}
-              </button>
 
-              {showShareSettings && (
-                <div className={styles.shareForm}>
-                  <div className={styles.shareOptions}>
-                    <div className={styles.permissionSelect}>
-                      <label>分享权限:</label>
-                      <select
-                        value={sharePermission}
-                        onChange={(e) => setSharePermission(e.target.value)}
-                        className={styles.permissionDropdown}
-                      >
-                        <option value="read">只读权限</option>
-                        <option value="edit">编辑权限</option>
-                      </select>
-                    </div>
-                    <div className={styles.passwordInput}>
-                      <input
-                        type="password"
-                        placeholder="设置分享密码（可选）"
-                        value={sharePassword}
-                        onChange={(e) => setSharePassword(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleGenerateShareLink}
-                    disabled={isGeneratingLink}
-                    className={styles.generateButton}
-                  >
-                    {isGeneratingLink ? '生成中...' : '生成分享链接'}
-                  </button>
-
-                  {shareLink && (
-                    <div className={styles.shareResult}>
-                      <p>分享链接已生成并复制到剪贴板:</p>
-                      <div className={styles.shareLink}>
-                        <input
-                          type="text"
-                          value={shareLink}
-                          readOnly
-                          className={styles.shareLinkInput}
-                        />
-                        <button
-                          onClick={() => navigator.clipboard.writeText(shareLink)}
-                          className={styles.copyButton}
-                        >
-                          复制
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { useTheme } from '../../hooks/ThemeContext';
 import { useCollaboration } from '../../hooks/useCollaboration';
 import { CollaborationPanel } from '../../components/collaboration/CollaborationPanel';
 import { AICollaborationPanel } from '../../components/ai/AICollaborationPanel';
+import { SharePanel } from '../../components/share/SharePanel';
 import { joinByShareLink } from '../../services/collaborationService';
 import { firestore } from '../../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -33,6 +34,7 @@ export const Component = () => {
   const [showPropertyPanel, setShowPropertyPanel] = useState(false);
   const [showCollaborationPanel, setShowCollaborationPanel] = useState(false);
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [showSharePanel, setShowSharePanel] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [recentColors, setRecentColors] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
@@ -1015,9 +1017,18 @@ export const Component = () => {
         />
       )}
 
+      {/* 分享面板 */}
+      {showSharePanel && (
+        <SharePanel
+          fileId={fileId}
+          ownerId={collaboration.ownerId}
+          onClose={() => setShowSharePanel(false)}
+        />
+      )}
+
       {/* 右上角按钮 - 漂浮在画板上 */}
       <div className={styles.rightButtons} style={{ zIndex: 10 }}>
-        <Button onClick={() => message.info('分享功能正在开发中')}>
+        <Button onClick={() => setShowSharePanel(!showSharePanel)}>
           <img src="/imgs/share-nodes-solid.png" alt="图标" style={{ width: '13px', height: '15px', marginRight: '6px', verticalAlign: 'middle' }} />
           分享
         </Button>
