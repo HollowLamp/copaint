@@ -1,0 +1,368 @@
+.aiPanel {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  width: 380px;
+  max-height: 80vh;
+  background: light-dark(white, #1f1f1f);
+  border: 1px solid light-dark(#e0e0e0, #333);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid light-dark(#f0f0f0, #333);
+  background: light-dark(#fafafa, #2a2a2a);
+  border-radius: 12px 12px 0 0;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: light-dark(#333, #fff);
+}
+
+.closeButton {
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: light-dark(#666, #999);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: light-dark(#f0f0f0, #333);
+  color: light-dark(#333, #fff);
+}
+
+.content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+.content :global(.ant-tabs) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content :global(.ant-tabs-content-holder) {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(80vh - 120px);
+}
+
+.content :global(.ant-tabs-tab) {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+.content :global(.ant-tabs-tab-btn) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabContent {
+  padding: 20px;
+  height: 100%;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: light-dark(#333, #fff);
+}
+
+.section p {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: light-dark(#666, #999);
+  line-height: 1.5;
+}
+
+.infoBox {
+  background: light-dark(#f8f9fa, #1a1a1a);
+  border: 1px solid light-dark(#e6e6e6, #404040);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.infoBox h4 {
+  margin: 0 0 8px 0;
+  color: light-dark(#1890ff, #40a9ff);
+}
+
+.infoBox p {
+  margin: 0 0 8px 0;
+  color: light-dark(#333, #fff);
+}
+
+.infoBox small {
+  color: light-dark(#999, #666);
+  font-size: 12px;
+}
+
+.promptHelp {
+  margin-top: 8px;
+}
+
+.promptHelp small {
+  color: light-dark(#999, #666);
+  font-size: 12px;
+}
+
+.editButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 新的编辑选项样式 */
+.editOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.editCard {
+  border: 1px solid light-dark(#e6e6e6, #404040);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: light-dark(#fafafa, #1a1a1a);
+}
+
+.editCard:hover {
+  border-color: light-dark(#1890ff, #40a9ff);
+  background: light-dark(#f0f8ff, #001529);
+}
+
+.editCard.selected {
+  border-color: light-dark(#1890ff, #40a9ff);
+  background: light-dark(#e6f7ff, #002140);
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+}
+
+.editCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.editLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: light-dark(#333, #fff);
+}
+
+.promptRequired {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: light-dark(#ffa940, #d46b08);
+  color: white;
+  font-weight: 500;
+}
+
+.editCard.selected .promptRequired {
+  background: light-dark(#52c41a, #389e0d);
+}
+
+.editDesc {
+  font-size: 12px;
+  color: light-dark(#666, #999);
+  line-height: 1.4;
+}
+
+.selectedEditSection {
+  background: light-dark(#f8f9fa, #1a1a1a);
+  border: 1px solid light-dark(#1890ff, #40a9ff);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.selectedEditSection h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: light-dark(#1890ff, #40a9ff);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.promptTag {
+  font-size: 12px;
+  font-weight: normal;
+  color: light-dark(#666, #999);
+}
+
+.featureList {
+  margin: 12px 0;
+  padding-left: 0;
+  color: light-dark(#666, #999);
+}
+
+.featureList li {
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.quickActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quickActions button {
+  flex: 1;
+  min-width: calc(50% - 4px);
+  font-size: 12px;
+}
+
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  z-index: 1001;
+}
+
+.loadingOverlay p {
+  margin-top: 16px;
+  color: light-dark(#666, #999);
+  font-size: 14px;
+}
+
+/* 深色模式下的加载覆盖层 */
+:global(.dark) .loadingOverlay {
+  background: rgba(31, 31, 31, 0.9);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .aiPanel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 100vh;
+    transform: none;
+    border-radius: 0;
+  }
+
+  .header {
+    border-radius: 0;
+  }
+
+  .content :global(.ant-tabs-content-holder) {
+    max-height: calc(100vh - 120px);
+  }
+}
+
+/* 自定义滑块样式 */
+.content :global(.ant-slider-track) {
+  background: #1890ff;
+}
+
+.content :global(.ant-slider-handle) {
+  border-color: #1890ff;
+}
+
+/* 自定义选择框样式 */
+.content :global(.ant-select-selector) {
+  border-radius: 6px;
+}
+
+/* 自定义文本域样式 */
+.content :global(.ant-input) {
+  border-radius: 6px;
+}
+
+.content :global(.ant-input:focus),
+.content :global(.ant-input-focused) {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* 自定义按钮样式 */
+.content :global(.ant-btn) {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.content :global(.ant-btn-primary) {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.content :global(.ant-btn-primary:hover) {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+/* 标签页样式优化 */
+.content :global(.ant-tabs-tab) {
+  border-radius: 6px 6px 0 0;
+  transition: all 0.2s;
+}
+
+.content :global(.ant-tabs-tab:hover) {
+  color: #1890ff;
+}
+
+.content :global(.ant-tabs-tab-active) {
+  background: light-dark(#f8f9fa, #262626);
+}
+
+/* 滚动条样式 */
+.content :global(.ant-tabs-content-holder)::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content :global(.ant-tabs-content-holder)::-webkit-scrollbar-track {
+  background: light-dark(#f0f0f0, #2a2a2a);
+  border-radius: 3px;
+}
+
+.content :global(.ant-tabs-content-holder)::-webkit-scrollbar-thumb {
+  background: light-dark(#d9d9d9, #555);
+  border-radius: 3px;
+}
+
+.content :global(.ant-tabs-content-holder)::-webkit-scrollbar-thumb:hover {
+  background: light-dark(#bfbfbf, #777);
+}

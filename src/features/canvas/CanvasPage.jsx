@@ -10,6 +10,7 @@ import { colors, fonts } from '../../utils/constants';
 import { useTheme } from '../../hooks/ThemeContext';
 import { useCollaboration } from '../../hooks/useCollaboration';
 import { CollaborationPanel } from '../../components/collaboration/CollaborationPanel';
+import { AICollaborationPanel } from '../../components/ai/AICollaborationPanel';
 import { joinByShareLink } from '../../services/collaborationService';
 import { firestore } from '../../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -31,6 +32,7 @@ export const Component = () => {
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [showPropertyPanel, setShowPropertyPanel] = useState(false);
   const [showCollaborationPanel, setShowCollaborationPanel] = useState(false);
+  const [showAIPanel, setShowAIPanel] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [recentColors, setRecentColors] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
@@ -402,6 +404,9 @@ export const Component = () => {
         break;
       case '实时协作':
         setShowCollaborationPanel(!showCollaborationPanel);
+        break;
+      case 'AI协作':
+        setShowAIPanel(!showAIPanel);
         break;
       case '画布背景':
         // 检查权限
@@ -1027,6 +1032,15 @@ export const Component = () => {
           collaborators={collaboration.collaborators}
           ownerId={collaboration.ownerId}
           onClose={() => setShowCollaborationPanel(false)}
+        />
+      )}
+
+      {/* AI协作面板 */}
+      {showAIPanel && (
+        <AICollaborationPanel
+          editor={editor}
+          fileId={fileId}
+          onClose={() => setShowAIPanel(false)}
         />
       )}
 
