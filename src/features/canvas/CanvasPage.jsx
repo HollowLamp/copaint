@@ -438,7 +438,7 @@ export const Component = () => {
     if (!editor) return;
 
     // 对于编辑工具，检查权限
-    if ([3, 4, 5, 7, 8].includes(toolIndex) && !checkEditPermission()) {
+    if ([1, 2, 3, 5, 6].includes(toolIndex) && !checkEditPermission()) {
       return;
     }
 
@@ -451,49 +451,30 @@ export const Component = () => {
     }
 
     switch (toolIndex) {
-      case 0: // 锁定
-        // 禁用所有对象的选择
-        editor.canvas.getObjects().forEach(obj => {
-          if (obj.name !== 'clip') {
-            obj.selectable = false;
-          }
-        });
-        editor.canvas.discardActiveObject();
-        editor.canvas.renderAll();
-        break;
-      case 1: // 手掌工具 - 平移功能
-        editor.canvas.getObjects().forEach(obj => {
-          if (obj.name !== 'clip') {
-            obj.selectable = false;
-          }
-        });
-        editor.canvas.discardActiveObject();
-        // 可以在这里添加平移模式的逻辑
-        break;
-      case 2: // 选择工具
+      case 0: // 选择工具
         editor.canvas.getObjects().forEach(obj => {
           if (obj.name !== 'clip') {
             obj.selectable = true;
           }
         });
         break;
-      case 3: // 矩形
+      case 1: // 矩形
         editor.addRectangle();
         break;
-      case 4: // 圆形
+      case 2: // 圆形
         editor.addCircle();
         break;
-      case 5: // 画笔
+      case 3: // 画笔
         editor.enableDrawingMode();
         setIsDrawingMode(true);
         break;
-      case 6: // 调色板
+      case 4: // 调色板
         setShowPropertyPanel(!showPropertyPanel);
         break;
-      case 7: // 文字
+      case 5: // 文字
         editor.addText('双击编辑文字');
         break;
-      case 8: // 图片
+      case 6: // 图片
         // 创建文件输入
         const input = document.createElement('input');
         input.type = 'file';
@@ -509,9 +490,6 @@ export const Component = () => {
           }
         };
         input.click();
-        break;
-      case 9: // 橡皮擦
-        editor.delete();
         break;
       default:
         break;
@@ -542,7 +520,7 @@ export const Component = () => {
 
   // 渲染形状选择菜单
   const renderShapeMenu = () => {
-    if (selectedTool !== 3) return null; // 只在矩形工具选中时显示
+    if (selectedTool !== 1) return null; // 只在矩形工具选中时显示
 
     return (
       <div className={styles.shapeMenu}>
@@ -564,19 +542,19 @@ export const Component = () => {
 
       switch (e.key.toLowerCase()) {
         case 'v': // 选择工具
-          handleToolSelect(2);
+          handleToolSelect(0);
           break;
         case 'r': // 矩形
-          handleToolSelect(3);
+          handleToolSelect(1);
           break;
         case 'o': // 圆形
-          handleToolSelect(4);
+          handleToolSelect(2);
           break;
         case 'b': // 画笔
-          handleToolSelect(5);
+          handleToolSelect(3);
           break;
         case 't': // 文字
-          handleToolSelect(7);
+          handleToolSelect(5);
           break;
         case 'delete':
         case 'backspace':
@@ -856,16 +834,13 @@ export const Component = () => {
 
   // Toolbar图标数组
   const icons = [
-    '/imgs/lock-solid.jpg',
-    '/imgs/hand-regular.jpg',
     '/imgs/arrow-pointer-solid.jpg',
     '/imgs/vector-square-solid.jpg',
     '/imgs/circle-regular.jpg',
     '/imgs/pen-solid.jpg',
     '/imgs/palette-solid.jpg',
     '/imgs/font-solid.jpg',
-    '/imgs/image-solid.jpg',
-    '/imgs/eraser-solid.jpg'
+    '/imgs/image-solid.jpg'
   ];
 
   return (
@@ -915,11 +890,11 @@ export const Component = () => {
         </div>
       )}
 
-      {/* 协作状态指示器 */}
+      {/* 协作状态指示器 - 下移避免挡住分享和素材库按钮 */}
       {collaboration.currentUser && (
         <div style={{
           position: 'absolute',
-          top: '10px',
+          top: '60px',
           right: '10px',
           display: 'flex',
           alignItems: 'center',
@@ -993,10 +968,6 @@ export const Component = () => {
               <li onClick={() => handleMenuOption('画布背景')}>
                 <img src="/imgs/layer-group-solid.jpg" alt="图标" style={{ width: '16px', height: '15px', marginRight: '10px', marginLeft: '5px', verticalAlign: 'middle', objectFit: 'contain' }} />
                 画布背景
-              </li>
-              <li>
-                <img src="/imgs/globe-solid.jpg" alt="图标" style={{ width: '16px', height: '15px', marginRight: '10px', marginLeft: '5px', verticalAlign: 'middle', objectFit: 'contain' }} />
-                语言
               </li>
             </ul>
           </div>
@@ -1091,10 +1062,7 @@ export const Component = () => {
         </button>
       </div>
 
-      {/* 右下角按钮组 - 漂浮在画板上 */}
-      <div className={styles.bottomRight} style={{ zIndex: 10 }}>
-        <button className={styles.cornerButton} onClick={() => message.info('帮助功能正在开发中')}>❓</button>
-      </div>
+
 
       {/* 返回按钮 - 漂浮在画板上 */}
       <div style={{
