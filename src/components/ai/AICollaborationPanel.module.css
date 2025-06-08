@@ -1,12 +1,14 @@
 .aiPanel {
   width: 380px;
   max-height: 80vh;
-  background: light-dark(white, #1f1f1f);
-  border: 1px solid light-dark(#e0e0e0, #333);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 8px;
+  box-shadow: 0 4px 16px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-family-base);
 }
 
 .header {
@@ -14,9 +16,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid light-dark(#f0f0f0, #333);
-  background: light-dark(#fafafa, #2a2a2a);
-  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
   cursor: grab;
   user-select: none;
 }
@@ -29,22 +30,27 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: light-dark(#333, #fff);
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .closeButton {
-  padding: 4px;
+  background: none;
   border: none;
-  background: transparent;
-  color: light-dark(#666, #999);
+  font-size: 20px;
   cursor: pointer;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
-  transition: all 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .closeButton:hover {
-  background: light-dark(#f0f0f0, #333);
-  color: light-dark(#333, #fff);
+  background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
 }
 
 .content {
@@ -89,19 +95,19 @@
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
-  color: light-dark(#333, #fff);
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .section p {
   margin: 0 0 12px 0;
   font-size: 13px;
-  color: light-dark(#666, #999);
+  color: light-dark(var(--text-secondary), var(--text-primary));
   line-height: 1.5;
 }
 
 .infoBox {
-  background: light-dark(#f8f9fa, #1a1a1a);
-  border: 1px solid light-dark(#e6e6e6, #404040);
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
@@ -109,16 +115,16 @@
 
 .infoBox h4 {
   margin: 0 0 8px 0;
-  color: light-dark(#1890ff, #40a9ff);
+  color: var(--accent-primary);
 }
 
 .infoBox p {
   margin: 0 0 8px 0;
-  color: light-dark(#333, #fff);
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .infoBox small {
-  color: light-dark(#999, #666);
+  color: light-dark(var(--text-secondary), var(--text-primary));
   font-size: 12px;
 }
 
@@ -127,7 +133,7 @@
 }
 
 .promptHelp small {
-  color: light-dark(#999, #666);
+  color: light-dark(var(--text-secondary), var(--text-primary));
   font-size: 12px;
 }
 
@@ -146,23 +152,24 @@
 }
 
 .editCard {
-  border: 1px solid light-dark(#e6e6e6, #404040);
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
   border-radius: 8px;
   padding: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: light-dark(#fafafa, #1a1a1a);
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
 }
 
 .editCard:hover {
-  border-color: light-dark(#1890ff, #40a9ff);
-  background: light-dark(#f0f8ff, #001529);
+  border-color: var(--accent-primary);
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+  transform: translateY(-1px);
 }
 
 .editCard.selected {
-  border-color: light-dark(#1890ff, #40a9ff);
-  background: light-dark(#e6f7ff, #002140);
-  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  border-color: var(--accent-primary);
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+  box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
 }
 
 .editCardHeader {
@@ -175,31 +182,31 @@
 .editLabel {
   font-weight: 500;
   font-size: 14px;
-  color: light-dark(#333, #fff);
+  color: light-dark(var(--text-primary), var(--text-secondary));
 }
 
 .promptRequired {
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 4px;
-  background: light-dark(#ffa940, #d46b08);
-  color: white;
+  background: var(--accent-primary);
+  color: light-dark(var(--text-secondary), var(--text-primary));
   font-weight: 500;
 }
 
 .editCard.selected .promptRequired {
-  background: light-dark(#52c41a, #389e0d);
+  background: var(--accent-hover);
 }
 
 .editDesc {
   font-size: 12px;
-  color: light-dark(#666, #999);
+  color: light-dark(var(--text-secondary), var(--text-primary));
   line-height: 1.4;
 }
 
 .selectedEditSection {
-  background: light-dark(#f8f9fa, #1a1a1a);
-  border: 1px solid light-dark(#1890ff, #40a9ff);
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  border: 1px solid var(--accent-primary);
   border-radius: 8px;
   padding: 16px;
   margin-top: 16px;
@@ -208,7 +215,7 @@
 .selectedEditSection h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
-  color: light-dark(#1890ff, #40a9ff);
+  color: var(--accent-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -217,13 +224,13 @@
 .promptTag {
   font-size: 12px;
   font-weight: normal;
-  color: light-dark(#666, #999);
+  color: light-dark(var(--text-secondary), var(--text-primary));
 }
 
 .featureList {
   margin: 12px 0;
   padding-left: 0;
-  color: light-dark(#666, #999);
+  color: light-dark(var(--text-secondary), var(--text-primary));
 }
 
 .featureList li {
@@ -251,24 +258,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: light-dark(rgba(255, 255, 255, 0.9), rgba(31, 31, 31, 0.9));
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 12px;
+  border-radius: 8px;
   z-index: 1001;
 }
 
 .loadingOverlay p {
   margin-top: 16px;
-  color: light-dark(#666, #999);
+  color: light-dark(var(--text-primary), var(--text-secondary));
   font-size: 14px;
-}
-
-/* 深色模式下的加载覆盖层 */
-:global(.dark) .loadingOverlay {
-  background: rgba(31, 31, 31, 0.9);
 }
 
 /* 响应式设计 */
@@ -296,27 +298,126 @@
 
 /* 自定义滑块样式 */
 .content :global(.ant-slider-track) {
-  background: #1890ff;
+  background: var(--accent-primary);
 }
 
 .content :global(.ant-slider-handle) {
-  border-color: #1890ff;
+  border-color: var(--accent-primary);
 }
 
 /* 自定义选择框样式 */
 .content :global(.ant-select-selector) {
   border-radius: 6px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  border-color: light-dark(var(--border-color), var(--accent-secondary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+.content :global(.ant-select-selector:hover) {
+  border-color: var(--accent-primary) !important;
+}
+
+.content :global(.ant-select-focused .ant-select-selector) {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px light-dark(rgba(24, 144, 255, 0.2), rgba(64, 169, 255, 0.2)) !important;
+}
+
+.content :global(.ant-select-selection-item) {
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+.content :global(.ant-select-selection-placeholder) {
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+}
+
+/* 下拉框选项样式 */
+.content :global(.ant-select-dropdown) {
+  background: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary)) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3)) !important;
+}
+
+.content :global(.ant-select-item) {
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  background: transparent !important;
+}
+
+.content :global(.ant-select-item:hover) {
+  background: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+.content :global(.ant-select-item-option-selected) {
+  background: var(--accent-primary) !important;
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+  font-weight: 500;
+}
+
+.content :global(.ant-select-item-option-selected:hover) {
+  background: var(--accent-hover) !important;
+}
+
+.content :global(.ant-select-arrow) {
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+}
+
+.content :global(.ant-select-open .ant-select-arrow) {
+  color: var(--accent-primary) !important;
+}
+
+/* 全局下拉框样式 - 处理dropdown渲染到body的情况 */
+:global(.ant-select-dropdown.ai-panel-dropdown) {
+  background: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary)) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3)) !important;
+}
+
+:global(.ant-select-dropdown.ai-panel-dropdown .ant-select-item) {
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  background: transparent !important;
+  padding: 8px 12px !important;
+}
+
+:global(.ant-select-dropdown.ai-panel-dropdown .ant-select-item:hover) {
+  background: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+:global(.ant-select-dropdown.ai-panel-dropdown .ant-select-item-option-selected) {
+  background: var(--accent-primary) !important;
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+  font-weight: 500;
+}
+
+:global(.ant-select-dropdown.ai-panel-dropdown .ant-select-item-option-selected:hover) {
+  background: var(--accent-hover) !important;
 }
 
 /* 自定义文本域样式 */
 .content :global(.ant-input) {
   border-radius: 6px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  border-color: light-dark(var(--border-color), var(--accent-secondary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
 }
 
 .content :global(.ant-input:focus),
 .content :global(.ant-input-focused) {
-  border-color: #1890ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px light-dark(rgba(24, 144, 255, 0.2), rgba(64, 169, 255, 0.2)) !important;
+}
+
+.content :global(.ant-input::placeholder) {
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+}
+
+.content :global(.ant-input:disabled) {
+  background: light-dark(var(--accent-secondary), var(--bg-secondary)) !important;
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+  cursor: not-allowed !important;
+  border-color: light-dark(var(--border-color), var(--accent-secondary)) !important;
 }
 
 /* 自定义按钮样式 */
@@ -326,27 +427,30 @@
 }
 
 .content :global(.ant-btn-primary) {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
 }
 
 .content :global(.ant-btn-primary:hover) {
-  background: #40a9ff;
-  border-color: #40a9ff;
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
 }
 
 /* 标签页样式优化 */
 .content :global(.ant-tabs-tab) {
   border-radius: 6px 6px 0 0;
   transition: all 0.2s;
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
 }
 
 .content :global(.ant-tabs-tab:hover) {
-  color: #1890ff;
+  color: var(--accent-primary) !important;
 }
 
 .content :global(.ant-tabs-tab-active) {
-  background: light-dark(#f8f9fa, #262626);
+  background: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
 }
 
 /* 滚动条样式 */
@@ -355,15 +459,15 @@
 }
 
 .content :global(.ant-tabs-content-holder)::-webkit-scrollbar-track {
-  background: light-dark(#f0f0f0, #2a2a2a);
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
   border-radius: 3px;
 }
 
 .content :global(.ant-tabs-content-holder)::-webkit-scrollbar-thumb {
-  background: light-dark(#d9d9d9, #555);
+  background: light-dark(var(--border-color), var(--accent-secondary));
   border-radius: 3px;
 }
 
 .content :global(.ant-tabs-content-holder)::-webkit-scrollbar-thumb:hover {
-  background: light-dark(#bfbfbf, #777);
+  background: light-dark(var(--accent-primary), var(--accent-hover));
 }

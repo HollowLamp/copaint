@@ -197,6 +197,7 @@ export const AICollaborationPanel = ({ onClose, editor, fileId, dragRef, onMouse
               value={style}
               onChange={setStyle}
               style={{ width: '100%' }}
+              dropdownClassName="ai-panel-dropdown"
             >
               <Option value="realistic">写实风格</Option>
               <Option value="cartoon">卡通风格</Option>
@@ -213,6 +214,7 @@ export const AICollaborationPanel = ({ onClose, editor, fileId, dragRef, onMouse
               value={quality}
               onChange={setQuality}
               style={{ width: '100%' }}
+              dropdownClassName="ai-panel-dropdown"
             >
               <Option value="economic">经济型 (0.04元/张) 性价比高</Option>
               <Option value="turbo">标准型 (0.14元/张) 速度快</Option>
@@ -320,7 +322,6 @@ export const AICollaborationPanel = ({ onClose, editor, fileId, dragRef, onMouse
                       placeholder="此功能无需填写指令，系统将自动处理"
                       rows={2}
                       disabled={true}
-                      style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
                     />
                     <div className={styles.promptHelp}>
                       <small>✅ 此功能无需额外指令，点击执行即可</small>
