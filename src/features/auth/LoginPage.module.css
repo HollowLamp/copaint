@@ -2,6 +2,13 @@
   height: 100vh;
   display: flex;
   background-color: light-dark(var(--bg-primary), var(--bg-secondary));
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  overflow: hidden;
+}
+
+.containerAnimated {
+  opacity: 1;
 }
 
 .leftSection {
@@ -11,16 +18,41 @@
   justify-content: center;
   background-color: light-dark(var(--bg-secondary), var(--bg-primary));
   padding: 40px;
+  transform: translateX(-50px);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.leftSectionAnimated {
+  transform: translateX(0);
+  opacity: 1;
 }
 
 .logoWrapper {
   text-align: center;
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
+}
+
+.logoWrapperAnimated {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .logo {
   width: 360px;
   height: auto;
   margin-bottom: 24px;
+  transform: scale(0.8) rotate(-10deg);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s;
+}
+
+.logoAnimated {
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
 }
 
 .brandName {
@@ -29,11 +61,26 @@
   color: var(--accent-primary);
   margin-bottom: 16px;
   font-family: 'ZCOOLKuaiLe', sans-serif;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s;
+}
+
+.brandNameAnimated {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .slogan {
   font-size: 18px;
   color: light-dark(var(--text-secondary), var(--text-primary));
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s;
+}
+
+.sloganAnimated {
+  transform: translateY(0);
   opacity: 0.8;
 }
 
@@ -43,6 +90,15 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
+  transform: translateX(50px);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s;
+  overflow: hidden;
+}
+
+.rightSectionAnimated {
+  transform: translateX(0);
+  opacity: 1;
 }
 
 .formWrapper {
@@ -52,6 +108,14 @@
   border-radius: 8px;
   padding: 40px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  transform: translateY(30px) scale(0.95);
+  opacity: 0;
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
+}
+
+.formWrapperAnimated {
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
 
 .title {
@@ -61,16 +125,40 @@
   color: var(--accent-primary);
   margin-bottom: 8px;
   font-family: 'ZCOOLKuaiLe', sans-serif;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s;
+}
+
+.titleAnimated {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .subtitle {
   text-align: center;
   color: light-dark(var(--text-secondary), var(--text-primary));
   margin-bottom: 32px;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s;
+}
+
+.subtitleAnimated {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .form {
   width: 100%;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.1s;
+}
+
+.formAnimated {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .form :global(.ant-input-affix-wrapper) {
@@ -182,6 +270,11 @@
 
   .leftSection {
     padding: 20px;
+    transform: translateY(-30px);
+  }
+
+  .leftSectionAnimated {
+    transform: translateY(0);
   }
 
   .logo {
@@ -194,6 +287,11 @@
 
   .rightSection {
     padding: 20px;
+    transform: translateY(30px);
+  }
+
+  .rightSectionAnimated {
+    transform: translateY(0);
   }
 
   .formWrapper {

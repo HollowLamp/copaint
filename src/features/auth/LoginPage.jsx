@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Modal, Divider, App } from 'antd';
 import { UserOutlined, LockOutlined, GithubOutlined, GoogleOutlined } from '@ant-design/icons';
 import { Button } from '../../components/button/Button';
@@ -28,6 +28,31 @@ export const Component = () => {
   const [githubLoading, setGithubLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
+
+  // 动画状态
+  const [animationStarted, setAnimationStarted] = useState(false);
+
+  // 启动动画
+  useEffect(() => {
+    if (!loading && !user) {
+      // 在动画期间隐藏body滚动条
+      document.body.style.overflow = 'hidden';
+
+      // 页面加载完成后启动动画
+      const timer = setTimeout(() => {
+        setAnimationStarted(true);
+        // 动画完成后恢复滚动条
+        setTimeout(() => {
+          document.body.style.overflow = '';
+        }, 1500); // 等待所有动画完成
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = '';
+      };
+    }
+  }, [loading, user]);
 
   // 等待加载完成
   if (loading) {
@@ -107,19 +132,31 @@ export const Component = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.leftSection}>
-        <div className={styles.logoWrapper}>
-          <img src="/login_logo.png" alt="CoPaint" className={styles.logo} />
-          <h1 className={styles.brandName}>CoPaint</h1>
-          <p className={styles.slogan}>简单有趣的协作绘画工具</p>
+    <div className={`${styles.container} ${animationStarted ? styles.containerAnimated : ''}`}>
+      <div className={`${styles.leftSection} ${animationStarted ? styles.leftSectionAnimated : ''}`}>
+        <div className={`${styles.logoWrapper} ${animationStarted ? styles.logoWrapperAnimated : ''}`}>
+          <img
+            src="/login_logo.png"
+            alt="CoPaint"
+            className={`${styles.logo} ${animationStarted ? styles.logoAnimated : ''}`}
+          />
+          <h1 className={`${styles.brandName} ${animationStarted ? styles.brandNameAnimated : ''}`}>
+            CoPaint
+          </h1>
+          <p className={`${styles.slogan} ${animationStarted ? styles.sloganAnimated : ''}`}>
+            简单有趣的协作绘画工具
+          </p>
         </div>
       </div>
 
-      <div className={styles.rightSection}>
-        <div className={styles.formWrapper}>
-          <h1 className={styles.title}>欢迎回来</h1>
-          <p className={styles.subtitle}>登录您的账户</p>
+      <div className={`${styles.rightSection} ${animationStarted ? styles.rightSectionAnimated : ''}`}>
+        <div className={`${styles.formWrapper} ${animationStarted ? styles.formWrapperAnimated : ''}`}>
+          <h1 className={`${styles.title} ${animationStarted ? styles.titleAnimated : ''}`}>
+            欢迎回来
+          </h1>
+          <p className={`${styles.subtitle} ${animationStarted ? styles.subtitleAnimated : ''}`}>
+            登录您的账户
+          </p>
 
           <Form
             form={form}
@@ -127,7 +164,7 @@ export const Component = () => {
             onFinish={handleSubmit}
             autoComplete="off"
             layout="vertical"
-            className={styles.form}
+            className={`${styles.form} ${animationStarted ? styles.formAnimated : ''}`}
           >
             <Form.Item name="username" rules={[{ required: true, message: '请输入邮箱' }]}>
               <Input prefix={<UserOutlined />} placeholder="邮箱" size="large" />
