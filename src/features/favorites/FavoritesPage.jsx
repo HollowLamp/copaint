@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router';
 const SORT_OPTIONS = [
   { label: '按收藏时间排序', value: 'favoriteTime' },
   { label: '按创建时间排序', value: 'createTime' },
-  { label: '按修改时间排序', value: 'updateTime' },
+  { label: '按修改时间排序', value: 'lastEditTime' },
   { label: '按首字母排序', value: 'name' },
 ];
 
@@ -32,6 +32,7 @@ export const Component = () => {
   const [search, setSearch] = useState('');
   const [renamingFile, setRenamingFile] = useState(null);
   const [newName, setNewName] = useState('');
+  const [ownerNicknames, setOwnerNicknames] = useState({});
 
   useEffect(() => {
     fetchFavorites();
@@ -58,6 +59,18 @@ export const Component = () => {
           };
         })
       );
+           // 获取所有不重复的ownerId
+           const ownerIds = [...new Set(files.map(file => file.ownerId))];
+      
+           // 批量获取所有owner的昵称
+           const nicknames = {};
+           await Promise.all(
+             ownerIds.map(async (ownerId) => {
+               const nickname = await userService.getNicknameById(ownerId);
+               nicknames[ownerId] = nickname;
+             })
+           );
+           setOwnerNicknames(nicknames);
       setFavorites(files);
     } catch (err) {
       console.error("❌ 加载收藏夹失败:", err);
@@ -65,15 +78,33 @@ export const Component = () => {
     }
   };
 
+  
+  const SORT_FIELD_MAP = {
+    favoriteTime: 'favoriteTime',
+    createTime: 'createTime',
+    lastEditTime: 'lastEditTime',  // 修改点
+    name: 'fileName',            // 修改点
+  };
+
   const sortedFavorites = [...favorites]
-    .filter(file => file.fileName.includes(search))
-    .sort((a, b) => {
-      const valA = a[sortBy];
-      const valB = b[sortBy];
-      if (valA < valB) return ascending ? -1 : 1;
-      if (valA > valB) return ascending ? 1 : -1;
-      return 0;
-    });
+  .filter(file => file.fileName?.includes(search))
+  .sort((a, b) => {
+    const field = SORT_FIELD_MAP[sortBy];
+    const valA = a[field];
+    const valB = b[field];
+
+    // Firebase Timestamp 对象处理
+    const getSortableValue = (v) =>
+      v?.toDate?.() instanceof Date ? v.toDate().getTime() : v?.toLowerCase?.() || v || '';
+
+    const aVal = getSortableValue(valA);
+    const bVal = getSortableValue(valB);
+
+    if (aVal < bVal) return ascending ? -1 : 1;
+    if (aVal > bVal) return ascending ? 1 : -1;
+    return 0;
+  });
+
 
   const handleUnfavorite = async (fileId) => {
     try {
@@ -86,6 +117,7 @@ export const Component = () => {
       message.error("操作失败");
     }
   };
+  
 
   const handleRename = async () => {
     if (!newName.trim()) return;
@@ -132,7 +164,6 @@ export const Component = () => {
       <Menu.Item icon={<ShareAltOutlined />}>分享</Menu.Item>
       <Menu.Item icon={<LinkOutlined />} onClick={() => handleCopyLink(file.id)}>复制链接</Menu.Item>
       <Menu.Item icon={<CopyOutlined />} onClick={() => handleCopyFile(file.id)}>创建副本</Menu.Item>
-      <Menu.Item icon={<SwapOutlined />}>转移所有权</Menu.Item>
       <Menu.Item danger icon={<DeleteOutlined />} onClick={() => handleUnfavorite(file.id)}>
         删除
       </Menu.Item>
@@ -193,8 +224,8 @@ export const Component = () => {
             >
               <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.updateTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{file.ownerName || '未知'}</p>
+              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
+              <p>文件归属：{ownerNicknames[file.ownerId] || '未知'}</p>
             </Card>
           </Col>
         ))}

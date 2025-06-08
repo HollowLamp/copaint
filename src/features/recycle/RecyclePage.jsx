@@ -97,7 +97,7 @@ export const Component = () => {
         {sortedFiles.map(file => (
           <Col key={file.id} span={6}>
             <Card
-              title={file.name || '未命名文件'}
+              title={file.fileName || '未命名文件'}
               actions={[
                 <Button
                   type="link"
@@ -118,7 +118,7 @@ export const Component = () => {
             >
               <p>文件ID：{file.id}</p>
               <p>删除时间：{file.recycleTime?.toDate?.().toLocaleString?.() || '未知'}</p>
-              <p>创建者：{file.ownerName || '我自己'}</p>
+              <p>创建者：{file.ownerId || '我自己'}</p>
             </Card>
           </Col>
         ))}

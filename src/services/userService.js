@@ -93,6 +93,17 @@ export async function addRecentFile(uid, fileId) {
     recents: arrayUnion(fileId),
   });
 }
+// services/userService.js
+
+export async function getNicknameById(uid) {
+  try {
+    const userInfo = await getUserInfo(uid);
+    return userInfo.nickname || '未知';
+  } catch (error) {
+    console.error(`获取用户 ${uid} 昵称失败:`, error);
+    return '未知';
+  }
+}
 
 // 忘记密码（发重置邮件）
 export async function resetPassword(email) {
