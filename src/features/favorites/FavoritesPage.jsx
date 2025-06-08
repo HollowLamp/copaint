@@ -17,7 +17,6 @@ import { useNavigate } from 'react-router';
 
 
 const SORT_OPTIONS = [
-  { label: '按收藏时间排序', value: 'favoriteTime' },
   { label: '按创建时间排序', value: 'createTime' },
   { label: '按修改时间排序', value: 'lastEditTime' },
   { label: '按首字母排序', value: 'fileName' },
@@ -134,7 +133,17 @@ export const Component = () => {
       message.error("操作失败");
     }
   };
-  
+  const handleRecycle = async (fileId) => {
+    try {
+      const uid = auth.currentUser?.uid;
+      await fileService.recycleFile(fileId); // 确保此 fileId 正确
+      await userService.removeFavorite(uid, fileId);
+      message.success("已放入回收站");
+      fetchFavorites(); // 确保这个函数能更新当前状态
+    } catch (err) {
+      message.error(err.message || "操作失败"); 
+    }
+  };
 
   const handleRename = async () => {
     if (!newName.trim()) return;
@@ -181,7 +190,7 @@ export const Component = () => {
       <Menu.Item icon={<ShareAltOutlined />}>分享</Menu.Item>
       <Menu.Item icon={<LinkOutlined />} onClick={() => handleCopyLink(file.id)}>复制链接</Menu.Item>
       <Menu.Item icon={<CopyOutlined />} onClick={() => handleCopyFile(file.id)}>创建副本</Menu.Item>
-      <Menu.Item danger icon={<DeleteOutlined />} onClick={() => handleUnfavorite(file.id)}>
+      <Menu.Item danger icon={<DeleteOutlined />} onClick={() => handleRecycle(file.id)}>
         删除
       </Menu.Item>
     </Menu>
@@ -238,7 +247,6 @@ export const Component = () => {
                 </Button>
               ]}
             >
-              <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>文件归属：{ownerNicknames[file.ownerId] || '未知'}</p>
