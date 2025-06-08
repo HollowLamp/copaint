@@ -14,6 +14,7 @@ import {
   getDoc,
   deleteDoc
 } from 'firebase/firestore';
+import { cleanNestedArrays, restoreNestedArrays } from './fileService';
 
 // 协作操作类型
 export const OPERATION_TYPES = {
@@ -57,9 +58,16 @@ export function subscribeToFileChanges(fileId, callback) {
   return onSnapshot(fileRef, (doc) => {
     if (doc.exists()) {
       const data = doc.data();
+
+      // 恢复内容中的嵌套数组
+      let content = data.content;
+      if (content) {
+        content = restoreNestedArrays(content);
+      }
+
       callback({
         fileId,
-        content: data.content,
+        content,
         collaborators: data.collaborators,
         lastEditTime: data.lastEditTime,
         ownerId: data.ownerId
@@ -161,9 +169,10 @@ export async function updateFileContent(fileId, userId, content) {
       throw new Error('无编辑权限');
     }
 
-    // 更新文件内容
+    // 清理嵌套数组后更新文件内容
+    const cleanedContent = cleanNestedArrays(content);
     await updateDoc(fileRef, {
-      content,
+      content: cleanedContent,
       lastEditTime: serverTimestamp()
     });
 
