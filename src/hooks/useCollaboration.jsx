@@ -7,6 +7,7 @@ import {
   updateFileContent,
   checkPermission,
   checkFileAccess,
+  getOnlineCollaborators,
   OPERATION_TYPES
 } from '../services/collaborationService';
 import { App } from 'antd';
@@ -223,6 +224,56 @@ export const useCollaboration = ({ fileId, onContentUpdate, onCollaboratorsUpdat
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  // 定期更新在线用户列表
+  useEffect(() => {
+    if (!fileId) return;
+
+    const updateOnlineUsers = async () => {
+      try {
+        const online = await getOnlineCollaborators(fileId);
+        setOnlineUsers(online);
+        console.log('在线用户更新:', online);
+      } catch (error) {
+        console.error('获取在线用户失败:', error);
+      }
+    };
+
+    // 立即更新一次
+    updateOnlineUsers();
+
+    // 每30秒更新一次在线用户列表
+    const interval = setInterval(updateOnlineUsers, 30000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [fileId]);
+
+  // 监听用户加入/离开操作，及时更新在线状态
+  useEffect(() => {
+    if (!fileId) return;
+
+    const updateOnlineUsersDebounced = () => {
+      // 延迟更新，等待操作记录写入数据库
+      setTimeout(async () => {
+        try {
+          const online = await getOnlineCollaborators(fileId);
+          setOnlineUsers(online);
+          console.log('用户活动后更新在线用户:', online);
+        } catch (error) {
+          console.error('更新在线用户失败:', error);
+        }
+      }, 1000);
+    };
+
+    // 监听自己的活动也更新在线状态
+    const activityTimer = setTimeout(updateOnlineUsersDebounced, 2000);
+
+    return () => {
+      clearTimeout(activityTimer);
+    };
+  }, [fileId, collaborators]); // 当协作者变化时也触发更新
 
   // 清理函数
   const cleanup = useCallback(() => {
