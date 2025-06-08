@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal,App } from 'antd';
+import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -24,7 +24,7 @@ const SORT_OPTIONS = [
 ];
 
 export const Component = () => {
-  const{message}=App.useApp();
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [sortBy, setSortBy] = useState('favoriteTime');
@@ -213,13 +213,12 @@ export const Component = () => {
               actions={[
                 <Button size="small" danger onClick={() => handleUnfavorite(file.id)}>已收藏</Button>,
                 <Button
-  size="small"
-  type="primary"
-  onClick={() => navigate(`/canvas/${file.id}`)}
-> 
-  打开
-</Button>
-
+                  size="small"
+                  type="primary"
+                  onClick={() => navigate(`/canvas/${file.id}`)}
+                >
+                  打开
+                </Button>
               ]}
             >
               <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>

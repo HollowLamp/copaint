@@ -1,107 +1,113 @@
-/* 基础布局 */
+/* 仪表盘基础布局 */
 .dashboard {
-  height: 100vh;
-  display: flex;
+  height: 100vh;          /* 设置高度为视口高度 */
+  display: flex;          /* 使用弹性布局 */
 }
 
-/* Logo 区域 */
+/* Logo 区域样式 */
 .logo {
-  height: 64px;
-  margin: 0;
-  padding: 0 24px;
-  font-size: 22px;
-  font-weight: bold;
-  font-family: 'ZCOOLKuaiLe', sans-serif;
-  color: var(--accent-primary);
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  height: 64px;           /* 固定高度 */
+  margin: 0;              /* 移除外边距 */
+  padding: 0 24px;        /* 左右内边距 */
+  font-size: 22px;        /* 字体大小 */
+  font-weight: bold;      /* 字体加粗 */
+  font-family: 'ZCOOLKuaiLe', sans-serif;  /* 使用快乐字体 */
+  color: var(--accent-primary);  /* 使用主题色 */
+  display: flex;          /* 使用弹性布局 */
+  align-items: center;    /* 垂直居中 */
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));  /* 底部边框 */
 }
 
-/* 侧边栏 */
+/* 侧边栏样式 */
 .dashboard :global(.ant-layout-sider) {
-  border-right: 1px solid light-dark(var(--border-color), var(--accent-secondary));
-  background-color: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  border-right: 1px solid light-dark(var(--border-color), var(--accent-secondary));  /* 右侧边框 */
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary)) !important;  /* 背景色 */
 }
 
-/* 菜单样式 */
+/* 菜单基础样式 */
 .dashboard :global(.ant-menu) {
-  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));  /* 菜单背景色 */
 }
 
+/* 菜单项和子菜单样式 */
 .dashboard :global(.ant-menu-item),
 .dashboard :global(.ant-menu-submenu) {
-  color: light-dark(var(--text-primary), var(--text-secondary));
+  color: light-dark(var(--text-primary), var(--text-secondary));  /* 文字颜色 */
 }
 
+/* 子菜单标题悬停效果 */
 .dashboard :global(.ant-menu-submenu-title:hover) {
-  color: var(--accent-primary);
+  color: var(--accent-primary);  /* 悬停时使用主题色 */
 }
 
+/* 菜单项悬停效果 */
 .dashboard :global(.ant-menu-item:hover) {
-  color: var(--accent-primary);
+  color: var(--accent-primary);  /* 悬停时使用主题色 */
 }
 
+/* 选中菜单项样式 */
 .dashboard :global(.ant-menu-item-selected) {
-  background-color: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
-  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary)) !important;  /* 选中背景色 */
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;  /* 选中文字颜色 */
 }
 
-/* 头部区域 */
+/* 头部区域样式 */
 .header {
-  height: 64px;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
-  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  height: 64px;           /* 固定高度 */
+  padding: 0 24px;        /* 左右内边距 */
+  display: flex;          /* 使用弹性布局 */
+  align-items: center;    /* 垂直居中 */
+  justify-content: flex-end;  /* 内容右对齐 */
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));  /* 背景色 */
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));  /* 底部边框 */
 }
 
-/* 主题切换图标 */
+/* 主题切换图标样式 */
 .header :global(.anticon-bulb) {
-  font-size: 20px;
-  margin-left: 16px;
-  color: light-dark(var(--text-primary), var(--text-secondary));
-  cursor: pointer;
-  transition: color 0.3s ease;
+  font-size: 20px;        /* 图标大小 */
+  margin-left: 16px;      /* 左边距 */
+  color: light-dark(var(--text-primary), var(--text-secondary));  /* 图标颜色 */
+  cursor: pointer;        /* 鼠标指针样式 */
+  transition: color 0.3s ease;  /* 颜色过渡动画 */
 }
 
+/* 主题切换图标悬停效果 */
 .header :global(.anticon-bulb:hover) {
-  color: var(--accent-primary);
+  color: var(--accent-primary);  /* 悬停时使用主题色 */
 }
 
-/* 内容区域 */
+/* 内容区域样式 */
 .content {
-  padding: 24px;
-  margin: 24px;
-  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
-  min-height: 280px;
-  border-radius: 8px;
+  padding: 24px;          /* 内边距 */
+  margin: 24px;           /* 外边距 */
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));  /* 背景色 */
+  min-height: 280px;      /* 最小高度 */
+  border-radius: 8px;     /* 圆角 */
 }
 
-/* 动画过渡效果 */
+/* 全局过渡动画效果 */
 .dashboard :global(*) {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* 平滑过渡效果 */
 }
 
-/* 按钮组样式 */
+/* 按钮组容器样式 */
 .buttonGroup {
-  padding: 16px;
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  padding: 16px;          /* 内边距 */
+  margin-top: auto;       /* 顶部自动边距，将按钮组推到底部 */
+  display: flex;          /* 使用弹性布局 */
+  flex-direction: column; /* 垂直排列 */
+  gap: 8px;              /* 按钮之间的间距 */
 }
 
-/* 图标样式 */
+/* 图标基础样式 */
 .icon {
-  font-size: 18px;
-  cursor: pointer;
-  color: light-dark(var(--text-primary), var(--text-secondary));
-  transition: color 0.3s ease;
+  font-size: 18px;        /* 图标大小 */
+  cursor: pointer;        /* 鼠标指针样式 */
+  color: light-dark(var(--text-primary), var(--text-secondary));  /* 图标颜色 */
+  transition: color 0.3s ease;  /* 颜色过渡动画 */
 }
 
+/* 图标悬停效果 */
 .icon:hover {
-  color: var(--accent-primary);
+  color: var(--accent-primary);  /* 悬停时使用主题色 */
 }
