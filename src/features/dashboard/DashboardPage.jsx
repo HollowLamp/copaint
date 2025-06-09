@@ -53,7 +53,7 @@ export const Component = () => {
     {
       key: '/backup',
       icon: <HistoryOutlined />,
-      label: '本地历史备份',
+      label: '最近打开',
     },
     // {
     //   key: '/profile',
