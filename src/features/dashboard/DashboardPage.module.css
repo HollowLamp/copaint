@@ -1,7 +1,12 @@
 /* 仪表盘基础布局 */
 .dashboard {
-  height: 100vh;          /* 设置高度为视口高度 */
-  display: flex;          /* 使用弹性布局 */
+  position: fixed;        /* 固定定位 */
+  top: 0;                /* 固定在顶部 */
+  left: 0;               /* 固定在左侧 */
+  right: 0;              /* 固定在右侧 */
+  bottom: 0;             /* 固定在底部 */
+  display: flex;         /* 使用弹性布局 */
+  background: light-dark(var(--bg-secondary), var(--bg-primary));  /* 背景色 */
 }
 
 /* Logo 区域样式 */
@@ -22,11 +27,15 @@
 .dashboard :global(.ant-layout-sider) {
   border-right: 1px solid light-dark(var(--border-color), var(--accent-secondary));  /* 右侧边框 */
   background-color: light-dark(var(--bg-secondary), var(--bg-primary)) !important;  /* 背景色 */
+  height: 100%;          /* 占满高度 */
+  overflow: hidden;      /* 防止滚动 */
 }
 
 /* 菜单基础样式 */
 .dashboard :global(.ant-menu) {
   background-color: light-dark(var(--bg-secondary), var(--bg-primary));  /* 菜单背景色 */
+  height: calc(100% - 64px);  /* 减去 logo 高度 */
+  overflow-y: auto;      /* 允许菜单滚动 */
 }
 
 /* 菜单项和子菜单样式 */
@@ -60,6 +69,9 @@
   justify-content: flex-end;  /* 内容右对齐 */
   background-color: light-dark(var(--bg-secondary), var(--bg-primary));  /* 背景色 */
   border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));  /* 底部边框 */
+  position: sticky;       /* 粘性定位 */
+  top: 0;                /* 固定在顶部 */
+  z-index: 10;           /* 确保在其他元素之上 */
 }
 
 /* 主题切换图标样式 */
@@ -78,11 +90,10 @@
 
 /* 内容区域样式 */
 .content {
-  padding: 24px;          /* 内边距 */
-  margin: 24px;           /* 外边距 */
+  height: calc(100vh - 64px);  /* 减去头部高度 */
+  overflow-y: auto;      /* 允许垂直滚动 */
   background-color: light-dark(var(--bg-secondary), var(--bg-primary));  /* 背景色 */
-  min-height: 280px;      /* 最小高度 */
-  border-radius: 8px;     /* 圆角 */
+  padding: 24px;         /* 内边距 */
 }
 
 /* 全局过渡动画效果 */

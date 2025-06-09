@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App } from 'antd';
+import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App, Form, Select } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -15,6 +15,8 @@ import * as userService from '../../services/userService';
 import * as fileService from '../../services/fileService';
 import { auth } from '../../services/firebase';
 import { useNavigate } from 'react-router';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { firestore } from '../../services/firebase';
 
 // 排序选项
 const SORT_OPTIONS = [
@@ -36,6 +38,8 @@ export const Component = () => {
   const [newName, setNewName] = useState(''); // 控制新文件名，newName: 字符串，重命名时输入的新文件名，setNewName: 更新新文件名的函数
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); // 添加创建弹窗状态
   const [newFileName, setNewFileName] = useState(''); // 添加新文件名状态
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false); // 添加分享弹窗状态
+  const [selectedFile, setSelectedFile] = useState(null); // 添加选中的文件状态
 
   // 获取手稿和收藏列表
   useEffect(() => {
@@ -200,6 +204,29 @@ export const Component = () => {
     }
   };
 
+  // 处理分享
+  const handleShare = (file) => {
+    setSelectedFile(file);
+    setIsShareModalVisible(true);
+  };
+
+  // 处理权限变更
+  const handlePermissionChange = async (values) => {
+    if (!selectedFile) return;
+    
+    try {
+      await updateDoc(doc(firestore, 'files', selectedFile.id), {
+        permission: values.permission,
+        lastUpdated: serverTimestamp()
+      });
+      message.success('权限更新成功');
+      setIsShareModalVisible(false);
+      fetchManuscripts(); // 刷新文件列表
+    } catch (error) {
+      message.error('权限更新失败');
+    }
+  };
+
   // 渲染菜单
   const renderMenu = (file) => (
     <Menu>
@@ -207,7 +234,7 @@ export const Component = () => {
         setRenamingFile(file);
         setNewName(file.fileName || '');
       }}>重命名</Menu.Item>
-      <Menu.Item icon={<ShareAltOutlined />}>分享</Menu.Item>
+      <Menu.Item icon={<ShareAltOutlined />} onClick={() => handleShare(file)}>分享</Menu.Item>
       <Menu.Item icon={<LinkOutlined />} onClick={() => handleCopyLink(file.id)}>复制链接</Menu.Item>
       <Menu.Item icon={<CopyOutlined />} onClick={() => handleCopyFile(file.id)}>创建副本</Menu.Item>
       <Menu.Item icon={<SwapOutlined />}>转移所有权</Menu.Item>
@@ -360,6 +387,42 @@ export const Component = () => {
             fontFamily: 'var(--font-family-base)'
           }}
         />
+      </Modal>
+
+      {/* 分享弹窗 */}
+      <Modal
+        title="分享文档"
+        open={isShareModalVisible}
+        onCancel={() => setIsShareModalVisible(false)}
+        footer={null}
+        width={400}
+      >
+        <Form
+          layout="vertical"
+          onFinish={handlePermissionChange}
+          initialValues={{ permission: selectedFile?.permission || 'none' }}
+        >
+          <Form.Item
+            name="permission"
+            label="访问权限"
+            rules={[{ required: true, message: '请选择访问权限' }]}
+          >
+            <Select>
+              <Select.Option value="none">未开启</Select.Option>
+              <Select.Option value="read">互联网获得链接的人 可阅读</Select.Option>
+              <Select.Option value="edit">互联网获得链接的人 可编辑</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setIsShareModalVisible(false)}>取消</Button>
+              <Button type="primary" htmlType="submit">
+                确定
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
