@@ -14,6 +14,8 @@ import { joinByShareLink } from '../../services/collaborationService';
 import { firestore } from '../../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './CanvasPage.module.css';
+import { auth } from '../../services/firebase';
+import * as userService from '../../services/userService';
 
 export const Component = () => {
   const { message } = App.useApp();
@@ -315,6 +317,17 @@ export const Component = () => {
           isLoadingRef.current = true;
           console.log('开始加载文件内容...');
 
+          // 将文件添加到最近打开列表
+          const uid = auth.currentUser?.uid;
+          if (uid) {
+            try {
+              await userService.addRecentFile(uid, fileId);
+              console.log('已添加到最近打开列表');
+            } catch (error) {
+              console.error('添加到最近打开列表失败:', error);
+            }
+          }
+
           const content = await getFileContent(fileId);
           if (content && content.json) {
             // 在加载期间禁用自动保存
@@ -337,7 +350,7 @@ export const Component = () => {
             setIsInitialized(true);
             console.log('初始化完成，启用自动保存');
           }, 2000);
-
+        
         } catch (error) {
           console.error('加载文件失败:', error);
           isLoadingRef.current = false;

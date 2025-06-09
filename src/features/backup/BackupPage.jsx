@@ -14,6 +14,7 @@ import * as userService from '../../services/userService';
 import * as fileService from '../../services/fileService';
 import { auth } from '../../services/firebase';
 import { useNavigate } from 'react-router';
+import { generateShareLink, getUserDetails } from '../../services/collaborationService';
 
 const SORT_OPTIONS = [
   { label: '按最近打开时间排序', value: 'lastEditTime' },
@@ -32,6 +33,8 @@ export const Component = () => {
   const [search, setSearch] = useState('');
   const [renamingFile, setRenamingFile] = useState(null);
   const [newName, setNewName] = useState('');
+  const [collaboratorNames, setCollaboratorNames] = useState({});
+  const [isNamesLoaded, setIsNamesLoaded] = useState(false);
 
   useEffect(() => {
     fetchRecentlyOpened();
@@ -45,7 +48,6 @@ export const Component = () => {
         return;
       }
       const recentFiles = await userService.getRecentFiles(uid);
-      // const recentFiles = await userService.getFavorites(uid);      
       console.log("最近打开的文件:", recentFiles);
       if (!Array.isArray(recentFiles) || recentFiles.length === 0) {
         setRecentlyOpened([]);
@@ -60,12 +62,30 @@ export const Component = () => {
           };
         })
       );
+
+      // 获取所有文件所有者的昵称
+      const newNames = { ...collaboratorNames };
+      const promises = files.map(async (file) => {
+        if (!collaboratorNames[file.ownerId]) {
+          try {
+            const userDetails = await getUserDetails(file.ownerId);
+            newNames[file.ownerId] = userDetails.nickname;
+          } catch (error) {
+            console.error('获取用户信息失败:', error);
+            newNames[file.ownerId] = file.ownerId;
+          }
+        }
+      });
+
+      await Promise.all(promises);
+      setCollaboratorNames(newNames);
       setRecentlyOpened(files);
     } catch (err) {
       console.error("❌ 加载最近打开文件失败:", err);
       message.error("加载最近打开文件失败");
     }
   };
+
   useEffect(() => {
     setSortedRecentlyOpened([...recentlyOpened]
     .filter(file => file.fileName.includes(search))
@@ -145,6 +165,7 @@ export const Component = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <h2>最近打开</h2>
       <Space style={{ marginBottom: 20 }}>
         <Radio.Group
           options={SORT_OPTIONS}
@@ -194,7 +215,7 @@ export const Component = () => {
               <p>最近打开时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{file.ownerId || '未知'}</p>
+              <p>文件归属：{collaboratorNames[file.ownerId] || '未知'}</p>
             </Card>
           </Col>
         ))}

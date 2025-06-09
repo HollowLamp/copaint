@@ -14,6 +14,7 @@ import * as userService from '../../services/userService';
 import * as fileService from '../../services/fileService';
 import { auth } from '../../services/firebase';
 import { useNavigate } from 'react-router';
+import { generateShareLink, getUserDetails } from '../../services/collaborationService';
 
 
 const SORT_OPTIONS = [
@@ -32,6 +33,8 @@ export const Component = () => {
   const [search, setSearch] = useState('');
   const [renamingFile, setRenamingFile] = useState(null);
   const [newName, setNewName] = useState('');
+  const [collaboratorNames, setCollaboratorNames] = useState({});
+  const [isNamesLoaded, setIsNamesLoaded] = useState(false);
 
   useEffect(() => {
     fetchFavorites();
@@ -58,6 +61,23 @@ export const Component = () => {
           };
         })
       );
+
+      // 获取所有文件所有者的昵称
+      const newNames = { ...collaboratorNames };
+      const promises = files.map(async (file) => {
+        if (!collaboratorNames[file.ownerId]) {
+          try {
+            const userDetails = await getUserDetails(file.ownerId);
+            newNames[file.ownerId] = userDetails.nickname;
+          } catch (error) {
+            console.error('获取用户信息失败:', error);
+            newNames[file.ownerId] = file.ownerId;
+          }
+        }
+      });
+
+      await Promise.all(promises);
+      setCollaboratorNames(newNames);
       setFavorites(files);
     } catch (err) {
       console.error("❌ 加载收藏夹失败:", err);
@@ -141,6 +161,7 @@ export const Component = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <h2>收藏夹</h2>
       <Space style={{ marginBottom: 20 }}>
         <Radio.Group
           options={SORT_OPTIONS}
@@ -193,7 +214,7 @@ export const Component = () => {
               <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>修改时间：{file.updateTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{file.ownerName || '未知'}</p>
+              <p>文件归属：{collaboratorNames[file.ownerId] || '未知'}</p>
             </Card>
           </Col>
         ))}

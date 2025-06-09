@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Layout, Menu, Input, Space, message } from 'antd';
+import { Layout, Menu, Space, message } from 'antd';
 import {
   BookOutlined,
   StarOutlined,
@@ -17,7 +17,6 @@ import { UserMenu } from '../../components/usermenu/UserMenu';
 import { useAuthUser } from '../../hooks/useAuthUser';
 
 const { Header, Sider, Content } = Layout;
-const { Search } = Input;
 
 export const Component = () => {
   const { theme, toggleTheme } = useTheme();
@@ -41,6 +40,11 @@ export const Component = () => {
       label: '绘画手稿',
     },
     {
+      key: '/backup',
+      icon: <HistoryOutlined />,
+      label: '最近打开',
+    },
+    {
       key: '/favorites',
       icon: <StarOutlined />,
       label: '收藏夹',
@@ -50,16 +54,6 @@ export const Component = () => {
       icon: <DeleteOutlined />,
       label: '回收站',
     },
-    {
-      key: '/backup',
-      icon: <HistoryOutlined />,
-      label: '最近打开',
-    },
-    // {
-    //   key: '/profile',
-    //   icon: <UserOutlined />,
-    //   label: '个人中心',
-    // },
   ];
 
   const handleLogout = async () => {
@@ -89,7 +83,6 @@ export const Component = () => {
       <Layout>
         <Header className={styles.header}>
           <Space>
-            <Search placeholder="搜索" allowClear style={{ width: 200 }} />
             <BulbOutlined onClick={toggleTheme} className={styles.icon} />
             <UserMenu
               onLogout={handleLogout}
