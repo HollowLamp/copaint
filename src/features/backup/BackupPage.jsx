@@ -16,9 +16,9 @@ import { auth } from '../../services/firebase';
 import { useNavigate } from 'react-router';
 
 const SORT_OPTIONS = [
-  { label: '按最近打开时间排序', value: 'lastOpenTime' },
+  { label: '按最近打开时间排序', value: 'lastEditTime' },
   { label: '按创建时间排序', value: 'createTime' },
-  { label: '按修改时间排序', value: 'updateTime' },
+  { label: '按修改时间排序', value: 'lastEditTime' },
   { label: '按首字母排序', value: 'fileName' },
 ];
 
@@ -26,6 +26,7 @@ export const Component = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [recentlyOpened, setRecentlyOpened] = useState([]);
+  const [sortedRecentlyOpened, setSortedRecentlyOpened] = useState([]);
   const [sortBy, setSortBy] = useState('lastOpenTime');
   const [ascending, setAscending] = useState(false); // 默认按最近打开时间倒序
   const [search, setSearch] = useState('');
@@ -65,8 +66,8 @@ export const Component = () => {
       message.error("加载最近打开文件失败");
     }
   };
-
-  const sortedRecentlyOpened = [...recentlyOpened]
+  useEffect(() => {
+    setSortedRecentlyOpened([...recentlyOpened]
     .filter(file => file.fileName.includes(search))
     .sort((a, b) => {
       const valA = a[sortBy];
@@ -74,7 +75,9 @@ export const Component = () => {
       if (valA < valB) return ascending ? -1 : 1;
       if (valA > valB) return ascending ? 1 : -1;
       return 0;
-    });
+    }));
+    console.log('sortedRecentlyOpened:', sortedRecentlyOpened);
+  }, [recentlyOpened, search, sortBy, ascending]);
 
   const handleRename = async () => {
     if (!newName.trim()) return;
@@ -151,7 +154,10 @@ export const Component = () => {
         />
         <Radio.Group
           value={ascending ? 'asc' : 'desc'}
-          onChange={(e) => setAscending(e.target.value === 'asc')}
+          onChange={(e) => {
+            setAscending(e.target.value === 'asc');
+            console.log('ascending:', e.target.value === 'asc');
+          }}
           optionType="button"
           buttonStyle="solid"
         >
@@ -185,9 +191,9 @@ export const Component = () => {
                 <Button size="small" type="primary" onClick={() => navigate(`/canvas/${file.id}`)}> 打开</Button>
               ]}
             >
-              <p>最近打开时间：{file.lastOpenTime?.toDate?.().toLocaleString?.() || '—'}</p>
+              <p>最近打开时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.updateTime?.toDate?.().toLocaleString?.() || '—'}</p>
+              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>文件归属：{file.ownerId || '未知'}</p>
             </Card>
           </Col>
