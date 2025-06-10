@@ -18,10 +18,9 @@ import { generateShareLink, getUserDetails } from '../../services/collaborationS
 
 
 const SORT_OPTIONS = [
-  { label: '按收藏时间排序', value: 'favoriteTime' },
   { label: '按创建时间排序', value: 'createTime' },
-  { label: '按修改时间排序', value: 'updateTime' },
-  { label: '按首字母排序', value: 'name' },
+  { label: '按修改时间排序', value: 'lastEditTime' },
+  { label: '按首字母排序', value: 'fileName' },
 ];
 
 export const Component = () => {
@@ -35,6 +34,7 @@ export const Component = () => {
   const [newName, setNewName] = useState('');
   const [collaboratorNames, setCollaboratorNames] = useState({});
   const [isNamesLoaded, setIsNamesLoaded] = useState(false);
+  const [ownerNicknames, setOwnerNicknames] = useState({});
 
   useEffect(() => {
     fetchFavorites();
@@ -78,6 +78,18 @@ export const Component = () => {
 
       await Promise.all(promises);
       setCollaboratorNames(newNames);
+           // 获取所有不重复的ownerId
+           const ownerIds = [...new Set(files.map(file => file.ownerId))];
+      
+           // 批量获取所有owner的昵称
+           const nicknames = {};
+           await Promise.all(
+             ownerIds.map(async (ownerId) => {
+               const nickname = await userService.getNicknameById(ownerId);
+               nicknames[ownerId] = nickname;
+             })
+           );
+           setOwnerNicknames(nicknames);
       setFavorites(files);
     } catch (err) {
       console.error("❌ 加载收藏夹失败:", err);
@@ -85,25 +97,71 @@ export const Component = () => {
     }
   };
 
+  
+  const SORT_FIELD_MAP = {
+    favoriteTime: 'favoriteTime',
+    createTime: 'createTime',
+    lastEditTime: 'lastEditTime',  // 修改点
+    fileName: 'fileName',            // 修改点
+  };
+
   const sortedFavorites = [...favorites]
-    .filter(file => file.fileName.includes(search))
-    .sort((a, b) => {
-      const valA = a[sortBy];
-      const valB = b[sortBy];
-      if (valA < valB) return ascending ? -1 : 1;
-      if (valA > valB) return ascending ? 1 : -1;
-      return 0;
-    });
+  .filter(file => file.fileName?.includes(search))
+  .sort((a, b) => {
+    const field = SORT_FIELD_MAP[sortBy];
+    const valA = a[field];
+    const valB = b[field];
+
+    // 改进后的排序值获取逻辑
+    const getSortableValue = (v) => {
+      // 处理时间类型
+      if (field.includes('Time') && v?.toDate) {
+        return v.toDate().getTime();
+      }
+      // 处理文件名（支持中文）
+      if (field === 'fileName') {
+        return v?.toString() || '';
+      }
+      return v?.toString()?.toLowerCase() || '';
+    };
+
+    const aVal = getSortableValue(valA);
+    const bVal = getSortableValue(valB);
+
+    // 使用 localeCompare 进行字符串比较
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      return ascending 
+        ? aVal.localeCompare(bVal, 'zh-Hans-CN') 
+        : bVal.localeCompare(aVal, 'zh-Hans-CN');
+    }
+
+    // 数值比较
+    if (aVal < bVal) return ascending ? -1 : 1;
+    if (aVal > bVal) return ascending ? 1 : -1;
+    return 0;
+  });
+
 
   const handleUnfavorite = async (fileId) => {
     try {
       const uid = auth.currentUser?.uid;
       await userService.removeFavorite(uid, fileId);
-      message.success("已取消收藏");
+      message.success("已取消收藏");  
       fetchFavorites();
     } catch (err) {
       console.error(err);
       message.error("操作失败");
+    }
+  };
+  const handleRecycle = async (fileId) => {
+    try {
+      const uid = auth.currentUser?.uid;
+      await fileService.recycleFile(fileId); // 确保此 fileId 正确
+      await userService.removeFavorite(uid, fileId);
+      message.success("已放入回收站");
+      fetchFavorites(); // 确保这个函数能更新当前状态
+    } catch (err) {
+      message.error(err.message || "操作失败"); 
     }
   };
 
@@ -152,8 +210,7 @@ export const Component = () => {
       <Menu.Item icon={<ShareAltOutlined />}>分享</Menu.Item>
       <Menu.Item icon={<LinkOutlined />} onClick={() => handleCopyLink(file.id)}>复制链接</Menu.Item>
       <Menu.Item icon={<CopyOutlined />} onClick={() => handleCopyFile(file.id)}>创建副本</Menu.Item>
-      <Menu.Item icon={<SwapOutlined />}>转移所有权</Menu.Item>
-      <Menu.Item danger icon={<DeleteOutlined />} onClick={() => handleUnfavorite(file.id)}>
+      <Menu.Item danger icon={<DeleteOutlined />} onClick={() => handleRecycle(file.id)}>
         删除
       </Menu.Item>
     </Menu>
@@ -211,10 +268,9 @@ export const Component = () => {
                 </Button>
               ]}
             >
-              <p>收藏时间：{file.favoriteTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.updateTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{collaboratorNames[file.ownerId] || '未知'}</p>
+              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
+              <p>文件归属：{ownerNicknames[file.ownerId] || '未知'}</p>
             </Card>
           </Col>
         ))}
