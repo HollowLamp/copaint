@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { App } from 'antd';
+import { App, Select } from 'antd';
 import { auth } from '../../services/firebase';
 import {
   addCollaborator,
@@ -123,6 +123,16 @@ export const CollaborationPanel = ({
     }
   };
 
+  // 修改协作者权限
+  const handleChangePermission = async (userId, newPermission) => {
+    try {
+      await addCollaborator(fileId, currentUser.uid, userId, newPermission);
+      message.success('权限修改成功！');
+    } catch (error) {
+      message.error('修改权限失败: ' + error.message);
+    }
+  };
+
 
 
   // 获取权限文本
@@ -198,9 +208,21 @@ export const CollaborationPanel = ({
                   </div>
                   <div className={styles.userDetails}>
                     <span className={styles.userId}>{collaborator.nickname}</span>
-                    <span className={styles.permission}>
-                      {getPermissionText(collaborator.permission)}
-                    </span>
+                    {isOwner ? (
+                      <Select
+                        value={collaborator.permission}
+                        onChange={(newPermission) => handleChangePermission(collaborator.uid, newPermission)}
+                        className={styles.collaboratorPermissionSelect}
+                        size="small"
+                      >
+                        <Select.Option value="read">只读</Select.Option>
+                        <Select.Option value="edit">编辑</Select.Option>
+                      </Select>
+                    ) : (
+                      <span className={styles.permission}>
+                        {getPermissionText(collaborator.permission)}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className={styles.userActions}>

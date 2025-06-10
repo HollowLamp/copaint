@@ -111,11 +111,28 @@
 }
 
 .onlineIndicator {
-  width: 8px;
-  height: 8px;
-  background: #00ff00;
+  width: 10px;
+  height: 10px;
+  background: #52c41a;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(82, 196, 26, 0.6);
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 6px rgba(82, 196, 26, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 12px rgba(82, 196, 26, 0.8);
+  }
+
+  100% {
+    box-shadow: 0 0 6px rgba(82, 196, 26, 0.6);
+  }
 }
 
 .emptyText {
@@ -130,17 +147,26 @@
 .collaboratorsList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .collaborator {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  background: light-dark(var(--bg-primary), var(--bg-secondary));
-  border-radius: 6px;
-  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  padding: 14px 16px;
+  background: light-dark(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.05));
+  border-radius: 8px;
+  border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+}
+
+.collaborator:hover {
+  background: light-dark(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.08));
+  border-color: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.15));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
 }
 
 .userInfo {
@@ -153,9 +179,10 @@
 .userDetails {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   flex: 1;
   min-width: 0;
+  margin-right: 12px;
 }
 
 .userRole {
@@ -167,12 +194,59 @@
 .permission {
   font-size: 11px;
   color: light-dark(var(--text-secondary), var(--text-primary));
+  background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.1));
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* 协作者权限选择器 */
+.collaboratorPermissionSelect {
+  min-width: 75px;
+  max-width: 85px;
+}
+
+.collaboratorPermissionSelect :global(.ant-select) {
+  width: 100% !important;
+}
+
+.collaboratorPermissionSelect :global(.ant-select-selector) {
+  background: light-dark(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1)) !important;
+  border: 1px solid light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.2)) !important;
+  border-radius: 6px !important;
+  height: 26px !important;
+  font-size: 11px !important;
+  padding: 0 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.collaboratorPermissionSelect :global(.ant-select-selector):hover {
+  border-color: var(--accent-primary) !important;
+  background: light-dark(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.15)) !important;
+}
+
+.collaboratorPermissionSelect :global(.ant-select-selection-item) {
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  line-height: 24px !important;
+  font-weight: 500 !important;
+  padding: 0 !important;
+}
+
+.collaboratorPermissionSelect :global(.ant-select-arrow) {
+  color: light-dark(var(--text-secondary), var(--text-primary)) !important;
+  font-size: 10px !important;
+}
+
+.collaboratorPermissionSelect :global(.ant-select-focused .ant-select-selector) {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px light-dark(rgba(var(--accent-primary-rgb), 0.2), rgba(var(--accent-primary-rgb), 0.3)) !important;
 }
 
 .userActions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .userStatus {
@@ -184,15 +258,25 @@
   background: #ff4757;
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
+  border-radius: 6px;
+  padding: 6px 10px;
   font-size: 11px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(255, 71, 87, 0.3);
+  margin-left: 8px;
 }
 
 .removeButton:hover {
   background: #ff3742;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4);
+}
+
+.removeButton:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 71, 87, 0.3);
 }
 
 /* 添加协作者 */
