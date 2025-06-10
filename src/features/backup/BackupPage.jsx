@@ -18,9 +18,6 @@ import { generateShareLink, getUserDetails } from '../../services/collaborationS
 
 const SORT_OPTIONS = [
   { label: '按最近打开时间排序', value: 'lastEditTime' },
-  { label: '按创建时间排序', value: 'createTime' },
-  { label: '按修改时间排序', value: 'lastEditTime' },
-  { label: '按首字母排序', value: 'fileName' },
 ];
 
 export const Component = () => {
@@ -214,7 +211,6 @@ export const Component = () => {
             >
               <p>最近打开时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
               <p>文件归属：{collaboratorNames[file.ownerId] || '未知'}</p>
             </Card>
           </Col>
