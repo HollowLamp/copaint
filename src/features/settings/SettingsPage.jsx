@@ -7,8 +7,8 @@ import { auth } from '../../services/firebase'; // 你的 Firebase 实例
 
 export const Component = () => {
   const { user: authUser, loading } = useAuthUser();
-    const [userInfo, setUserInfo] = useState(null);
-    const { message } = App.useApp();
+  const [userInfo, setUserInfo] = useState(null);
+  const { message } = App.useApp();
   useEffect(() => {
     if (authUser && authUser.uid) {
       getUserInfo(authUser.uid)
@@ -22,14 +22,14 @@ export const Component = () => {
       message.error('两次输入的密码不一致');
       return;
     }
-  
+
     const currentUser = auth.currentUser;
-  
+
     if (!currentUser) {
       message.error('未登录或会话已过期');
       return;
     }
-  
+
     try {
       await updatePassword(currentUser, values.newPassword);
       message.success('密码修改成功'); // ✅ 成功弹窗提示
@@ -58,6 +58,7 @@ export const Component = () => {
 
       {userInfo ? (
         <Typography.Paragraph>
+          用户ID：<strong>{authUser?.uid}</strong><br />
           昵称：<strong>{userInfo.nickname}</strong><br />
           邮箱：<strong>{userInfo.email}</strong>
         </Typography.Paragraph>
