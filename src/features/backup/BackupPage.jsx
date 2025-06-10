@@ -18,9 +18,6 @@ import { generateShareLink, getUserDetails } from '../../services/collaborationS
 
 const SORT_OPTIONS = [
   { label: '按最近打开时间排序', value: 'lastEditTime' },
-  { label: '按创建时间排序', value: 'createTime' },
-  { label: '按修改时间排序', value: 'lastEditTime' },
-  { label: '按首字母排序', value: 'fileName' },
 ];
 
 export const Component = () => {
