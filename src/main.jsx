@@ -4,10 +4,10 @@ import 'antd/dist/reset.css';
 import './styles/fonts.css';
 import './styles/index.css';
 import App from './App';
-import { startCleanupService } from './services/cleanupService';
+import { startCleanupScheduler } from './services/cleanupService';
 
-// 启动协作记录清理服务
-startCleanupService();
+// 启动优化后的协作记录清理调度器
+startCleanupScheduler();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

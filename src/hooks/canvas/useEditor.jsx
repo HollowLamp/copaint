@@ -244,9 +244,20 @@ const buildEditor = ({
       );
     },
     delete: () => {
-      canvas.getActiveObjects().forEach((object) => canvas.remove(object));
+      const activeObjects = canvas.getActiveObjects();
+
+      if (activeObjects.length === 0) return;
+
+      console.log(`删除 ${activeObjects.length} 个对象`);
+
+      // 批量删除所有选中的对象，object:removed事件会自动触发防抖保存
+      canvas.remove(...activeObjects);
+
+      // 清除选择状态
       canvas.discardActiveObject();
       canvas.renderAll();
+
+      console.log(`删除完成`);
     },
     resetCanvas: () => {
       // 获取workspace对象
@@ -619,7 +630,7 @@ export const useEditor = ({
 
   const editor = useMemo(() => {
     if (canvas) {
-      return buildEditor({
+      const editorInstance = buildEditor({
         save,
         undo,
         redo,
@@ -643,6 +654,8 @@ export const useEditor = ({
         defaultWidth: initialWidth.current,
         defaultHeight: initialHeight.current,
       });
+
+      return editorInstance;
     }
     return undefined;
   }, [

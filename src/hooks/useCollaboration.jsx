@@ -157,11 +157,11 @@ export const useCollaboration = ({ fileId, onContentUpdate, onCollaboratorsUpdat
       await updateFileContent(fileId, currentUser.uid, content);
       console.log('画布更新已广播到服务器');
 
-      // 延迟恢复，确保所有监听器都处理完更新
+      // 延迟恢复，确保所有监听器都处理完更新，从1.5秒增加到2.5秒
       setTimeout(() => {
         setIsReceivingUpdate(false);
         console.log('广播完成，恢复监听状态');
-      }, 1500); // 增加延迟时间
+      }, 2500); // 增加延迟时间，减少重复更新
 
     } catch (error) {
       console.error('广播画布更新失败:', error);
@@ -242,8 +242,8 @@ export const useCollaboration = ({ fileId, onContentUpdate, onCollaboratorsUpdat
     // 立即更新一次
     updateOnlineUsers();
 
-    // 每30秒更新一次在线用户列表
-    const interval = setInterval(updateOnlineUsers, 30000);
+    // 每60秒更新一次在线用户列表，从30秒增加到60秒减少查询频率
+    const interval = setInterval(updateOnlineUsers, 60000);
 
     return () => {
       clearInterval(interval);
@@ -251,29 +251,30 @@ export const useCollaboration = ({ fileId, onContentUpdate, onCollaboratorsUpdat
   }, [fileId]);
 
   // 监听用户加入/离开操作，及时更新在线状态
-  useEffect(() => {
-    if (!fileId) return;
+  // 注释掉这个过于频繁的更新逻辑，减少数据库查询
+  // useEffect(() => {
+  //   if (!fileId) return;
 
-    const updateOnlineUsersDebounced = () => {
-      // 延迟更新，等待操作记录写入数据库
-      setTimeout(async () => {
-        try {
-          const online = await getOnlineCollaborators(fileId);
-          setOnlineUsers(online);
-          console.log('用户活动后更新在线用户:', online);
-        } catch (error) {
-          console.error('更新在线用户失败:', error);
-        }
-      }, 1000);
-    };
+  //   const updateOnlineUsersDebounced = () => {
+  //     // 延迟更新，等待操作记录写入数据库
+  //     setTimeout(async () => {
+  //       try {
+  //         const online = await getOnlineCollaborators(fileId);
+  //         setOnlineUsers(online);
+  //         console.log('用户活动后更新在线用户:', online);
+  //       } catch (error) {
+  //         console.error('更新在线用户失败:', error);
+  //       }
+  //     }, 1000);
+  //   };
 
-    // 监听自己的活动也更新在线状态
-    const activityTimer = setTimeout(updateOnlineUsersDebounced, 2000);
+  //   // 监听自己的活动也更新在线状态
+  //   const activityTimer = setTimeout(updateOnlineUsersDebounced, 2000);
 
-    return () => {
-      clearTimeout(activityTimer);
-    };
-  }, [fileId, collaborators]); // 当协作者变化时也触发更新
+  //   return () => {
+  //     clearTimeout(activityTimer);
+  //   };
+  // }, [fileId, collaborators]); // 当协作者变化时也触发更新
 
   // 清理函数
   const cleanup = useCallback(() => {

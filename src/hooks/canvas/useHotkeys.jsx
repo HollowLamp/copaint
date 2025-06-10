@@ -12,8 +12,19 @@ export const useHotkeys = ({ canvas, undo, redo, save, copy, paste, hasEditPermi
 
     // 删除选中的对象（需要编辑权限）
     if (isBackspace && hasEditPermission) {
-      canvas?.remove(...canvas.getActiveObjects());
-      canvas?.discardActiveObject();
+      const activeObjects = canvas?.getActiveObjects() || [];
+
+      if (activeObjects.length === 0) return;
+
+      console.log(`热键删除 ${activeObjects.length} 个对象`);
+
+      // 批量删除所有选中的对象，object:removed事件会自动触发防抖保存
+      canvas.remove(...activeObjects);
+
+      // 清除选择状态
+      canvas.discardActiveObject();
+
+      console.log(`热键删除完成`);
     }
 
     // 撤销（Ctrl+Z）（需要编辑权限）

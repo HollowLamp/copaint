@@ -1,102 +1,110 @@
-import { cleanupAllExpiredOperations } from './collaborationService';
+import { firestore } from './firebase';
+import { collection, query, where, getDocs, deleteDoc, writeBatch } from 'firebase/firestore';
 
-// 清理服务类
-class CleanupService {
-  constructor() {
-    this.isRunning = false;
-    this.intervalId = null;
-    // 默认每小时清理一次
-    this.cleanupInterval = 60 * 60 * 1000; // 1小时
-    // 删除2小时前的记录
-    this.maxAgeHours = 2;
+// 清理配置 - 降低清理频率，减少数据库负载
+const CLEANUP_CONFIG = {
+  // 协作操作保留时间（从2小时增加到6小时）
+  COLLABORATION_MAX_AGE_HOURS: 6,
+  // 清理批次大小
+  BATCH_SIZE: 100,
+  // 清理间隔（从每小时增加到每3小时）
+  CLEANUP_INTERVAL_MS: 3 * 60 * 60 * 1000, // 3小时
+};
+
+let cleanupTimer = null;
+let isCleanupRunning = false;
+
+// 清理过期的协作操作记录
+export async function cleanupExpiredCollaborations() {
+  if (isCleanupRunning) {
+    console.log('清理任务已在运行中，跳过');
+    return;
   }
 
-  // 启动自动清理
-  start() {
-    if (this.isRunning) {
-      console.log('清理服务已在运行');
+  isCleanupRunning = true;
+  console.log('开始清理过期协作记录...');
+
+  try {
+    const expiredTime = new Date(Date.now() - CLEANUP_CONFIG.COLLABORATION_MAX_AGE_HOURS * 60 * 60 * 1000);
+
+    const collaborationsRef = collection(firestore, 'collaborations');
+    const q = query(
+      collaborationsRef,
+      where('timestamp', '<', expiredTime)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      console.log('没有需要清理的协作记录');
       return;
     }
 
-    console.log('启动协作记录清理服务');
-    this.isRunning = true;
+    // 使用批量删除，提高效率
+    const batch = writeBatch(firestore);
+    let deleteCount = 0;
 
-    // 立即执行一次清理
-    this.performCleanup();
-
-    // 设置定时清理
-    this.intervalId = setInterval(() => {
-      this.performCleanup();
-    }, this.cleanupInterval);
-  }
-
-  // 停止自动清理
-  stop() {
-    if (!this.isRunning) {
-      console.log('清理服务未在运行');
-      return;
-    }
-
-    console.log('停止协作记录清理服务');
-    this.isRunning = false;
-
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
-  }
-
-  // 执行清理操作
-  async performCleanup() {
-    try {
-      console.log('开始清理过期协作记录...');
-      const deletedCount = await cleanupAllExpiredOperations(this.maxAgeHours);
-
-      if (deletedCount > 0) {
-        console.log(`清理完成，共删除 ${deletedCount} 条过期记录`);
+    snapshot.docs.forEach((doc, index) => {
+      if (index < CLEANUP_CONFIG.BATCH_SIZE) {
+        batch.delete(doc.ref);
+        deleteCount++;
       }
-    } catch (error) {
-      console.error('自动清理失败:', error);
+    });
+
+    if (deleteCount > 0) {
+      await batch.commit();
+      console.log(`已清理 ${deleteCount} 条过期协作记录`);
     }
-  }
 
-  // 手动触发清理
-  async triggerCleanup() {
-    return this.performCleanup();
-  }
-
-  // 设置清理间隔（分钟）
-  setCleanupInterval(minutes) {
-    this.cleanupInterval = minutes * 60 * 1000;
-
-    if (this.isRunning) {
-      // 重启定时器
-      this.stop();
-      this.start();
+    // 如果还有更多记录需要清理，延迟执行下一批
+    if (snapshot.docs.length > CLEANUP_CONFIG.BATCH_SIZE) {
+      setTimeout(() => {
+        cleanupExpiredCollaborations();
+      }, 5000); // 5秒后清理下一批
     }
-  }
 
-  // 设置最大保留时间（小时）
-  setMaxAge(hours) {
-    this.maxAgeHours = hours;
-  }
-
-  // 获取状态
-  getStatus() {
-    return {
-      isRunning: this.isRunning,
-      cleanupInterval: this.cleanupInterval,
-      maxAgeHours: this.maxAgeHours
-    };
+  } catch (error) {
+    console.error('清理过期协作记录失败:', error);
+  } finally {
+    isCleanupRunning = false;
   }
 }
 
-// 创建单例实例
-const cleanupService = new CleanupService();
+// 启动定期清理任务
+export function startCleanupScheduler() {
+  if (cleanupTimer) {
+    console.log('清理调度器已在运行');
+    return;
+  }
 
-export default cleanupService;
+  console.log(`启动清理调度器，间隔：${CLEANUP_CONFIG.CLEANUP_INTERVAL_MS / 1000 / 60}分钟`);
 
-// 便捷方法
-export const startCleanupService = () => cleanupService.start();
-export const stopCleanupService = () => cleanupService.stop();
-export const triggerManualCleanup = () => cleanupService.triggerCleanup();
+  // 立即执行一次清理
+  cleanupExpiredCollaborations();
+
+  // 设置定期清理
+  cleanupTimer = setInterval(() => {
+    cleanupExpiredCollaborations();
+  }, CLEANUP_CONFIG.CLEANUP_INTERVAL_MS);
+}
+
+// 停止清理调度器
+export function stopCleanupScheduler() {
+  if (cleanupTimer) {
+    clearInterval(cleanupTimer);
+    cleanupTimer = null;
+    console.log('清理调度器已停止');
+  }
+}
+
+// 手动触发清理（降低频率调用）
+export async function triggerManualCleanup() {
+  // 添加防抖，避免频繁手动清理
+  if (triggerManualCleanup.lastCall && Date.now() - triggerManualCleanup.lastCall < 300000) {
+    console.log('手动清理被防抖限制（5分钟内只能触发一次）');
+    return;
+  }
+
+  triggerManualCleanup.lastCall = Date.now();
+  await cleanupExpiredCollaborations();
+}

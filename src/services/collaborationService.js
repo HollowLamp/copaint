@@ -82,17 +82,17 @@ export function subscribeToCollaborationOperations(fileId, callback) {
   const q = query(
     operationsRef,
     where('fileId', '==', fileId),
-    where('timestamp', '>', new Date(Date.now() - 300000)), // 监听最近5分钟的操作，减少查询频率
+    where('timestamp', '>', new Date(Date.now() - 600000)), // 增加到10分钟，减少查询量
     orderBy('timestamp', 'desc'),
-    limit(20) // 减少限制数量
+    limit(10) // 进一步减少限制数量，从20降到10
   );
 
   return onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
         const operation = { id: change.doc.id, ...change.doc.data() };
-        // 只处理最近30秒的操作，进一步减少处理量
-        if (operation.timestamp && operation.timestamp.toDate() > new Date(Date.now() - 30000)) {
+        // 只处理最近60秒的操作，从30秒增加到60秒减少处理频率
+        if (operation.timestamp && operation.timestamp.toDate() > new Date(Date.now() - 60000)) {
           callback(operation);
         }
       }
@@ -119,8 +119,8 @@ export async function broadcastOperation(fileId, userId, operationType, data) {
     const now = Date.now();
     const lastCleanup = lastCleanupCache.get(fileId) || 0;
 
-    // 每5分钟最多清理一次，或者随机触发（10%概率）
-    if (now - lastCleanup > 300000 || Math.random() < 0.1) {
+    // 每2分钟最多清理一次，或者随机触发（20%概率），提高清理频率
+    if (now - lastCleanup > 120000 || Math.random() < 0.2) {
       // 异步清理，不阻塞主要操作
       cleanupExpiredOperations(fileId).then(() => {
         lastCleanupCache.set(fileId, now);
@@ -141,12 +141,12 @@ const updateDebounceCache = new Map();
 // 更新文件内容（带权限检查和防抖）
 export async function updateFileContent(fileId, userId, content) {
   try {
-    // 防抖检查，同一文件ID在500ms内只能更新一次
+    // 防抖检查，同一文件ID在2秒内只能更新一次，从500ms增加到2秒
     const cacheKey = `${fileId}_${userId}`;
     const now = Date.now();
     const lastUpdate = updateDebounceCache.get(cacheKey);
 
-    if (lastUpdate && (now - lastUpdate) < 500) {
+    if (lastUpdate && (now - lastUpdate) < 2000) {
       console.log('防抖跳过更新:', fileId);
       return;
     }

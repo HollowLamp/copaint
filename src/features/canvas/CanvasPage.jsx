@@ -74,7 +74,7 @@ export const Component = () => {
           console.error('保存失败:', error);
         }
       }
-    }, 1000); // 1秒防抖
+    }, 3000); // 从1秒增加到3秒防抖，减少保存频率
   });
 
   // 协作内容更新回调
@@ -342,11 +342,11 @@ export const Component = () => {
           if (uid) {
             try {
               await userService.addRecentFile(uid, fileId);
-              // 更新文件的最后编辑时间
-              await updateDoc(doc(firestore, 'files', fileId), {
-                lastEditTime: serverTimestamp()
-              });
-              console.log('已添加到最近打开列表并更新最后编辑时间');
+              // 移除自动更新lastEditTime，只有真正编辑时才更新
+              // await updateDoc(doc(firestore, 'files', fileId), {
+              //   lastEditTime: serverTimestamp()
+              // });
+              console.log('已添加到最近打开列表');
             } catch (error) {
               console.error('添加到最近打开列表失败:', error);
             }
@@ -1164,8 +1164,6 @@ export const Component = () => {
           ↻
         </button>
       </div>
-
-
 
       {/* 返回按钮 - 漂浮在画板上 */}
       <div style={{
