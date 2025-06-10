@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App, Form, Select } from 'antd';
+import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App, Form, Select, Spin } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -41,6 +41,7 @@ export const Component = () => {
   const [selectedFile, setSelectedFile] = useState(null); // 添加选中的文件状态
   const [shareForm] = Form.useForm(); // 添加表单实例
   const [collaboratorNames, setCollaboratorNames] = useState({});
+  const [loading, setLoading] = useState(true);
 
   // 获取手稿和收藏列表
   useEffect(() => {
@@ -72,13 +73,14 @@ export const Component = () => {
   // 获取手稿
   const fetchManuscripts = async () => {
     try {
+      setLoading(true);
       const uid = auth.currentUser?.uid;
       if (!uid) {
         message.error("用户未登录");
         return;
       }
       const files = await fileService.getMyFiles(uid);
-      
+
       // 获取所有协作者的昵称
       const allCollaborators = files.flatMap(file => file.collaborators || []);
       const newNames = { ...collaboratorNames };
@@ -100,6 +102,8 @@ export const Component = () => {
     } catch (err) {
       console.error("❌ 加载我的手稿失败:", err);
       message.error("加载我的手稿失败");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -273,79 +277,86 @@ export const Component = () => {
         />
       </Space>
 
-      <Row gutter={[16, 16]}>
-        {/* 创建新手稿卡片 */}
-        <Col span={6}>
-          <Card
-            hoverable
-            onClick={() => setIsCreateModalVisible(true)}
-            style={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              cursor: 'pointer'
-            }}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              color: 'var(--accent-primary)'
-            }}>
-              <PlusOutlined style={{ fontSize: '24px', marginBottom: '8px' }} />
-              <span>创建新手稿</span>
-            </div>
-          </Card>
-        </Col>
-
-        {/* 现有的手稿列表 */}
-        {sortedManuscripts.map((file) => (
-          <Col key={file.id} span={6}>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '50px 0' }}>
+          <Spin size="large" />
+          <div style={{ marginTop: 16, color: '#666' }}>正在加载手稿...</div>
+        </div>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {/* 创建新手稿卡片 */}
+          <Col span={6}>
             <Card
-              title={
-                <span>
-                  {file.fileName || '未命名'}
-                  <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
-                    setRenamingFile(file);
-                    setNewName(file.fileName || '');
-                  }} />
-                </span>
-              }
-              extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
-              actions={[
-                <Button 
-                  size="small" 
-                  type={isFavorited(file.id) ? "default" : "default"}
-                  danger={isFavorited(file.id)}
-                  onClick={() => isFavorited(file.id) ? handleUnfavorite(file.id) : handleFavorite(file.id)}
-                >
-                  {isFavorited(file.id) ? "已收藏" : "收藏"}
-                </Button>,
-                <Button
-                  size="small"
-                  type="primary"
-                  onClick={() => navigate(`/canvas/${file.id}`)}
-                  style={{
-                    backgroundColor: 'var(--accent-primary)',
-                    borderColor: 'var(--accent-primary)'
-                  }}
-                >
-                  打开
-                </Button>
-              ]}
+              hoverable
+              onClick={() => setIsCreateModalVisible(true)}
+              style={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
             >
-              <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>协作者：{(file.collaborators || []).map(c => collaboratorNames[c.userId] || c.userId).join(', ') || '无'}</p>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: 'var(--accent-primary)'
+              }}>
+                <PlusOutlined style={{ fontSize: '24px', marginBottom: '8px' }} />
+                <span>创建新手稿</span>
+              </div>
             </Card>
           </Col>
-        ))}
-      </Row>
 
-      {sortedManuscripts.length === 0 && (
-        <p style={{ color: '#999', textAlign: 'center' }}>暂无我的手稿</p>
+          {/* 现有的手稿列表 */}
+          {sortedManuscripts.map((file) => (
+            <Col key={file.id} span={6}>
+              <Card
+                title={
+                  <span>
+                    {file.fileName || '未命名'}
+                    <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
+                      setRenamingFile(file);
+                      setNewName(file.fileName || '');
+                    }} />
+                  </span>
+                }
+                extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
+                actions={[
+                  <Button
+                    size="small"
+                    type={isFavorited(file.id) ? "default" : "default"}
+                    danger={isFavorited(file.id)}
+                    onClick={() => isFavorited(file.id) ? handleUnfavorite(file.id) : handleFavorite(file.id)}
+                  >
+                    {isFavorited(file.id) ? "已收藏" : "收藏"}
+                  </Button>,
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => navigate(`/canvas/${file.id}`)}
+                    style={{
+                      backgroundColor: 'var(--accent-primary)',
+                      borderColor: 'var(--accent-primary)'
+                    }}
+                  >
+                    打开
+                  </Button>
+                ]}
+              >
+                <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>协作者：{(file.collaborators || []).map(c => collaboratorNames[c.userId] || c.userId).join(', ') || '无'}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
+
+      {!loading && sortedManuscripts.length === 0 && (
+        <p style={{ color: '#999', textAlign: 'center', padding: '50px 0' }}>暂无手稿，点击创建新手稿开始吧！</p>
       )}
 
       <Modal

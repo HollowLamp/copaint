@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App } from 'antd';
+import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App, Spin } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -35,6 +35,7 @@ export const Component = () => {
   const [newName, setNewName] = useState('');
   const [collaboratorNames, setCollaboratorNames] = useState({});
   const [isNamesLoaded, setIsNamesLoaded] = useState(false);
+  const [loading, setLoading] = useState(true); // 添加loading状态
 
   useEffect(() => {
     fetchRecentlyOpened();
@@ -42,6 +43,7 @@ export const Component = () => {
 
   const fetchRecentlyOpened = async () => {
     try {
+      setLoading(true); // 开始加载
       const uid = auth.currentUser?.uid;
       if (!uid) {
         message.error("用户未登录");
@@ -83,19 +85,21 @@ export const Component = () => {
     } catch (err) {
       console.error("❌ 加载最近打开文件失败:", err);
       message.error("加载最近打开文件失败");
+    } finally {
+      setLoading(false); // 结束加载
     }
   };
 
   useEffect(() => {
     setSortedRecentlyOpened([...recentlyOpened]
-    .filter(file => file.fileName.includes(search))
-    .sort((a, b) => {
-      const valA = a[sortBy];
-      const valB = b[sortBy];
-      if (valA < valB) return ascending ? -1 : 1;
-      if (valA > valB) return ascending ? 1 : -1;
-      return 0;
-    }));
+      .filter(file => file.fileName.includes(search))
+      .sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+        if (valA < valB) return ascending ? -1 : 1;
+        if (valA > valB) return ascending ? 1 : -1;
+        return 0;
+      }));
     console.log('sortedRecentlyOpened:', sortedRecentlyOpened);
   }, [recentlyOpened, search, sortBy, ascending]);
 
@@ -193,36 +197,43 @@ export const Component = () => {
         />
       </Space>
 
-      <Row gutter={[16, 16]}>
-        {sortedRecentlyOpened.map((file) => (
-          <Col key={file.id} span={6}>
-            <Card
-              title={
-                <span>
-                  {file.fileName || '未命名'}
-                  <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
-                    setRenamingFile(file);
-                    setNewName(file.fileName || '');
-                  }} />
-                </span>
-              }
-              extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
-              actions={[
-                <Button size="small" danger onClick={() => handleDelete(file.id)}>删除</Button>,
-                <Button size="small" type="primary" onClick={() => navigate(`/canvas/${file.id}`)}> 打开</Button>
-              ]}
-            >
-              <p>最近打开时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{collaboratorNames[file.ownerId] || '未知'}</p>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '50px 0' }}>
+          <Spin size="large" />
+          <div style={{ marginTop: 16, color: '#666' }}>正在加载最近打开的文件...</div>
+        </div>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {sortedRecentlyOpened.map((file) => (
+            <Col key={file.id} span={6}>
+              <Card
+                title={
+                  <span>
+                    {file.fileName || '未命名'}
+                    <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
+                      setRenamingFile(file);
+                      setNewName(file.fileName || '');
+                    }} />
+                  </span>
+                }
+                extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
+                actions={[
+                  <Button size="small" danger onClick={() => handleDelete(file.id)}>删除</Button>,
+                  <Button size="small" type="primary" onClick={() => navigate(`/canvas/${file.id}`)}> 打开</Button>
+                ]}
+              >
+                <p>最近打开时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>文件归属：{collaboratorNames[file.ownerId] || '未知'}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
 
-      {sortedRecentlyOpened.length === 0 && (
-        <p style={{ color: '#999', textAlign: 'center' }}>暂无最近打开的文件</p>
+      {!loading && sortedRecentlyOpened.length === 0 && (
+        <p style={{ color: '#999', textAlign: 'center', padding: '50px 0' }}>暂无最近打开的文件</p>
       )}
 
       <Modal

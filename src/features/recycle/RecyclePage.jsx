@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Radio, Row, Col, message, Space, App } from 'antd';
+import { Card, Button, Radio, Row, Col, message, Space, App, Spin } from 'antd';
 import { DeleteOutlined, RollbackOutlined } from '@ant-design/icons';
 import { auth } from '../../services/firebase';
 import * as fileService from '../../services/fileService';
@@ -17,20 +17,22 @@ export const Component = () => {
   const [sortBy, setSortBy] = useState('recycleTime'); // 修改默认排序字段
   const [ascending, setAscending] = useState(false);
   const [ownerNicknames, setOwnerNicknames] = useState({});
+  const [loading, setLoading] = useState(true);
 
   // 获取当前用户的回收文件
   useEffect(() => {
     const fetchRecycleFiles = async () => {
       try {
+        setLoading(true);
         const uid = auth.currentUser?.uid;
         if (!uid) return message.error("请先登录");
 
         const files = await fileService.getMyFiles(uid, true);
         console.log("♻️ 回收文件：", files);
-        
+
         // 获取所有不重复的ownerId
         const ownerIds = [...new Set(files.map(file => file.ownerId))];
-        
+
         // 批量获取所有owner的昵称
         const nicknames = {};
         await Promise.all(
@@ -44,18 +46,20 @@ export const Component = () => {
             }
           })
         );
-        
+
         setOwnerNicknames(nicknames);
         setDeletedFiles(files);
       } catch (err) {
         console.error(err);
         message.error("加载回收站失败");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchRecycleFiles();
   }, []);
-//改进后的排序逻辑
+  //改进后的排序逻辑
   const sortedFiles = [...deletedFiles].sort((a, b) => {
     // 处理时间类型的排序
     if (sortBy === 'recycleTime') {
@@ -63,16 +67,16 @@ export const Component = () => {
       const timeB = b.recycleTime?.toDate?.()?.getTime?.() || 0;
       return ascending ? timeA - timeB : timeB - timeA;
     }
-    
+
     // 处理文件名的排序 - 支持中文拼音
     if (sortBy === 'fileName') {
       const nameA = a.fileName?.toString() || '';
       const nameB = b.fileName?.toString() || '';
-      return ascending 
+      return ascending
         ? nameA.localeCompare(nameB, 'zh-CN', { sensitivity: 'accent' })
         : nameB.localeCompare(nameA, 'zh-CN', { sensitivity: 'accent' });
     }
-    
+
     return 0;
   });
 
@@ -124,39 +128,46 @@ export const Component = () => {
       </Space>
 
       {/* 文件卡片列表 */}
-      <Row gutter={[16, 16]}>
-        {sortedFiles.map(file => (
-          <Col key={file.id} span={6}>
-            <Card
-              title={file.fileName || '未命名文件'}
-              actions={[
-                <Button
-                  type="link"
-                  icon={<RollbackOutlined />}
-                  onClick={() => handleRestore(file.id)}
-                >
-                  恢复
-                </Button>,
-                <Button
-                  type="link"
-                  danger
-                  icon={<DeleteOutlined />}
-                  onClick={() => handleDelete(file.id)}
-                >
-                  删除
-                </Button>
-              ]}
-            >
-              <p>文件ID：{file.id}</p>
-              <p>删除时间：{file.recycleTime?.toDate?.().toLocaleString?.() || '未知'}</p>
-              <p>创建者：{ownerNicknames[file.ownerId] || '未知'}</p>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '50px 0' }}>
+          <Spin size="large" />
+          <div style={{ marginTop: 16, color: '#666' }}>正在加载回收站...</div>
+        </div>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {sortedFiles.map(file => (
+            <Col key={file.id} span={6}>
+              <Card
+                title={file.fileName || '未命名文件'}
+                actions={[
+                  <Button
+                    type="link"
+                    icon={<RollbackOutlined />}
+                    onClick={() => handleRestore(file.id)}
+                  >
+                    恢复
+                  </Button>,
+                  <Button
+                    type="link"
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDelete(file.id)}
+                  >
+                    删除
+                  </Button>
+                ]}
+              >
+                <p>文件ID：{file.id}</p>
+                <p>删除时间：{file.recycleTime?.toDate?.().toLocaleString?.() || '未知'}</p>
+                <p>创建者：{ownerNicknames[file.ownerId] || '未知'}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
 
       {/* 空状态提示 */}
-      {deletedFiles.length === 0 && (
+      {!loading && deletedFiles.length === 0 && (
         <p style={{ textAlign: 'center', color: '#999', marginTop: 40 }}>
           暂无回收文件
         </p>

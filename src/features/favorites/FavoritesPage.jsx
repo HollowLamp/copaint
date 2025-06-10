@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App } from 'antd';
+import { Button, Card, Dropdown, Menu, Input, Space, Radio, Row, Col, message, Modal, App, Spin } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -35,6 +35,7 @@ export const Component = () => {
   const [collaboratorNames, setCollaboratorNames] = useState({});
   const [isNamesLoaded, setIsNamesLoaded] = useState(false);
   const [ownerNicknames, setOwnerNicknames] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchFavorites();
@@ -42,6 +43,7 @@ export const Component = () => {
 
   const fetchFavorites = async () => {
     try {
+      setLoading(true);
       const uid = auth.currentUser?.uid;
       if (!uid) {
         message.error("用户未登录");
@@ -78,26 +80,28 @@ export const Component = () => {
 
       await Promise.all(promises);
       setCollaboratorNames(newNames);
-           // 获取所有不重复的ownerId
-           const ownerIds = [...new Set(files.map(file => file.ownerId))];
-      
-           // 批量获取所有owner的昵称
-           const nicknames = {};
-           await Promise.all(
-             ownerIds.map(async (ownerId) => {
-               const nickname = await userService.getNicknameById(ownerId);
-               nicknames[ownerId] = nickname;
-             })
-           );
-           setOwnerNicknames(nicknames);
+      // 获取所有不重复的ownerId
+      const ownerIds = [...new Set(files.map(file => file.ownerId))];
+
+      // 批量获取所有owner的昵称
+      const nicknames = {};
+      await Promise.all(
+        ownerIds.map(async (ownerId) => {
+          const nickname = await userService.getNicknameById(ownerId);
+          nicknames[ownerId] = nickname;
+        })
+      );
+      setOwnerNicknames(nicknames);
       setFavorites(files);
     } catch (err) {
       console.error("❌ 加载收藏夹失败:", err);
       message.error("加载收藏夹失败");
+    } finally {
+      setLoading(false);
     }
   };
 
-  
+
   const SORT_FIELD_MAP = {
     favoriteTime: 'favoriteTime',
     createTime: 'createTime',
@@ -106,47 +110,47 @@ export const Component = () => {
   };
 
   const sortedFavorites = [...favorites]
-  .filter(file => file.fileName?.includes(search))
-  .sort((a, b) => {
-    const field = SORT_FIELD_MAP[sortBy];
-    const valA = a[field];
-    const valB = b[field];
+    .filter(file => file.fileName?.includes(search))
+    .sort((a, b) => {
+      const field = SORT_FIELD_MAP[sortBy];
+      const valA = a[field];
+      const valB = b[field];
 
-    // 改进后的排序值获取逻辑
-    const getSortableValue = (v) => {
-      // 处理时间类型
-      if (field.includes('Time') && v?.toDate) {
-        return v.toDate().getTime();
+      // 改进后的排序值获取逻辑
+      const getSortableValue = (v) => {
+        // 处理时间类型
+        if (field.includes('Time') && v?.toDate) {
+          return v.toDate().getTime();
+        }
+        // 处理文件名（支持中文）
+        if (field === 'fileName') {
+          return v?.toString() || '';
+        }
+        return v?.toString()?.toLowerCase() || '';
+      };
+
+      const aVal = getSortableValue(valA);
+      const bVal = getSortableValue(valB);
+
+      // 使用 localeCompare 进行字符串比较
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return ascending
+          ? aVal.localeCompare(bVal, 'zh-Hans-CN')
+          : bVal.localeCompare(aVal, 'zh-Hans-CN');
       }
-      // 处理文件名（支持中文）
-      if (field === 'fileName') {
-        return v?.toString() || '';
-      }
-      return v?.toString()?.toLowerCase() || '';
-    };
 
-    const aVal = getSortableValue(valA);
-    const bVal = getSortableValue(valB);
-
-    // 使用 localeCompare 进行字符串比较
-    if (typeof aVal === 'string' && typeof bVal === 'string') {
-      return ascending 
-        ? aVal.localeCompare(bVal, 'zh-Hans-CN') 
-        : bVal.localeCompare(aVal, 'zh-Hans-CN');
-    }
-
-    // 数值比较
-    if (aVal < bVal) return ascending ? -1 : 1;
-    if (aVal > bVal) return ascending ? 1 : -1;
-    return 0;
-  });
+      // 数值比较
+      if (aVal < bVal) return ascending ? -1 : 1;
+      if (aVal > bVal) return ascending ? 1 : -1;
+      return 0;
+    });
 
 
   const handleUnfavorite = async (fileId) => {
     try {
       const uid = auth.currentUser?.uid;
       await userService.removeFavorite(uid, fileId);
-      message.success("已取消收藏");  
+      message.success("已取消收藏");
       fetchFavorites();
     } catch (err) {
       console.error(err);
@@ -161,7 +165,7 @@ export const Component = () => {
       message.success("已放入回收站");
       fetchFavorites(); // 确保这个函数能更新当前状态
     } catch (err) {
-      message.error(err.message || "操作失败"); 
+      message.error(err.message || "操作失败");
     }
   };
 
@@ -243,41 +247,48 @@ export const Component = () => {
         />
       </Space>
 
-      <Row gutter={[16, 16]}>
-        {sortedFavorites.map((file) => (
-          <Col key={file.id} span={6}>
-            <Card
-              title={
-                <span>
-                  {file.fileName || '未命名'}
-                  <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
-                    setRenamingFile(file);
-                    setNewName(file.fileName || '');
-                  }} />
-                </span>
-              }
-              extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
-              actions={[
-                <Button size="small" danger onClick={() => handleUnfavorite(file.id)}>已收藏</Button>,
-                <Button
-                  size="small"
-                  type="primary"
-                  onClick={() => navigate(`/canvas/${file.id}`)}
-                >
-                  打开
-                </Button>
-              ]}
-            >
-              <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
-              <p>文件归属：{ownerNicknames[file.ownerId] || '未知'}</p>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '50px 0' }}>
+          <Spin size="large" />
+          <div style={{ marginTop: 16, color: '#666' }}>正在加载收藏内容...</div>
+        </div>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {sortedFavorites.map((file) => (
+            <Col key={file.id} span={6}>
+              <Card
+                title={
+                  <span>
+                    {file.fileName || '未命名'}
+                    <EditOutlined style={{ marginLeft: 8 }} onClick={() => {
+                      setRenamingFile(file);
+                      setNewName(file.fileName || '');
+                    }} />
+                  </span>
+                }
+                extra={<Dropdown overlay={renderMenu(file)}><MoreOutlined /></Dropdown>}
+                actions={[
+                  <Button size="small" danger onClick={() => handleUnfavorite(file.id)}>已收藏</Button>,
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => navigate(`/canvas/${file.id}`)}
+                  >
+                    打开
+                  </Button>
+                ]}
+              >
+                <p>创建时间：{file.createTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>修改时间：{file.lastEditTime?.toDate?.().toLocaleString?.() || '—'}</p>
+                <p>文件归属：{ownerNicknames[file.ownerId] || '未知'}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
 
-      {sortedFavorites.length === 0 && (
-        <p style={{ color: '#999', textAlign: 'center' }}>暂无收藏内容</p>
+      {!loading && sortedFavorites.length === 0 && (
+        <p style={{ color: '#999', textAlign: 'center', padding: '50px 0' }}>暂无收藏内容</p>
       )}
 
       <Modal
