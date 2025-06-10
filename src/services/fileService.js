@@ -216,5 +216,53 @@ export async function setCollaborators(fileId, collaborators) {
   });
 }
 
+// 转移文件所有权
+export async function transferOwnership(fileId, currentOwnerId, newOwnerId) {
+  try {
+    const docRef = doc(firestore, "files", fileId);
+    const snap = await getDoc(docRef);
+
+    if (!snap.exists()) {
+      throw new Error("文件不存在");
+    }
+
+    const fileData = snap.data();
+
+    // 检查当前用户是否是文件所有者
+    if (fileData.ownerId !== currentOwnerId) {
+      throw new Error("只有文件所有者可以转移所有权");
+    }
+
+    // 检查新所有者是否在协作者列表中
+    const collaborators = fileData.collaborators || [];
+    const newOwnerIndex = collaborators.findIndex(c => c.userId === newOwnerId);
+
+    if (newOwnerIndex === -1) {
+      throw new Error("新所有者必须是当前协作者");
+    }
+
+    // 移除新所有者的协作者身份
+    const updatedCollaborators = collaborators.filter(c => c.userId !== newOwnerId);
+
+    // 将原所有者添加为协作者（编辑权限）
+    updatedCollaborators.push({
+      userId: currentOwnerId,
+      permission: 'edit'
+    });
+
+    // 更新文件所有者和协作者列表
+    await updateDoc(docRef, {
+      ownerId: newOwnerId,
+      collaborators: updatedCollaborators,
+      lastEditTime: serverTimestamp()
+    });
+
+    return true;
+  } catch (error) {
+    console.error('转移所有权失败:', error);
+    throw error;
+  }
+}
+
 // 导出辅助函数，供其他模块使用
 export { cleanNestedArrays, restoreNestedArrays };
