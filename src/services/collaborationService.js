@@ -549,6 +549,153 @@ export async function cleanupAllExpiredOperations(maxAgeHours = 2) {
   }
 }
 
+// 申请权限
+export async function requestPermission(fileId, userId, requestedPermission, message = '') {
+  try {
+    await addDoc(collection(firestore, 'permissionRequests'), {
+      fileId,
+      requesterId: userId,
+      requestedPermission,
+      message,
+      status: 'pending', // pending, approved, rejected
+      timestamp: serverTimestamp()
+    });
+
+    return true;
+  } catch (error) {
+    console.error('申请权限失败:', error);
+    throw error;
+  }
+}
+
+// 获取用户的权限申请
+export async function getUserPermissionRequests(userId) {
+  try {
+    const requestsRef = collection(firestore, 'permissionRequests');
+    const q = query(
+      requestsRef,
+      where('requesterId', '==', userId),
+      orderBy('timestamp', 'desc'),
+      limit(50)
+    );
+
+    const snapshot = await getDocs(q);
+    const requests = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return requests;
+  } catch (error) {
+    console.error('获取权限申请失败:', error);
+    return [];
+  }
+}
+
+// 获取文件所有者的权限申请
+export async function getFileOwnerPermissionRequests(ownerId) {
+  try {
+    // 首先获取所有者拥有的文件
+    const filesRef = collection(firestore, 'files');
+    const filesQuery = query(filesRef, where('ownerId', '==', ownerId));
+    const filesSnapshot = await getDocs(filesQuery);
+
+    if (filesSnapshot.empty) {
+      return [];
+    }
+
+    const fileIds = filesSnapshot.docs.map(doc => doc.id);
+
+    // 获取这些文件的权限申请
+    const requestsRef = collection(firestore, 'permissionRequests');
+    const q = query(
+      requestsRef,
+      where('fileId', 'in', fileIds),
+      where('status', '==', 'pending'),
+      orderBy('timestamp', 'desc'),
+      limit(50)
+    );
+
+    const snapshot = await getDocs(q);
+    const requests = [];
+
+    for (const requestDoc of snapshot.docs) {
+      const requestData = requestDoc.data();
+
+      // 获取文件信息
+      const fileDoc = await getDoc(doc(firestore, 'files', requestData.fileId));
+      const fileName = fileDoc.exists() ? fileDoc.data().fileName : '未知文件';
+
+      // 获取申请者信息
+      const requesterDetails = await getUserDetails(requestData.requesterId);
+
+      requests.push({
+        id: requestDoc.id,
+        ...requestData,
+        fileName,
+        requesterDetails
+      });
+    }
+
+    return requests;
+  } catch (error) {
+    console.error('获取权限申请失败:', error);
+    return [];
+  }
+}
+
+// 处理权限申请（批准或拒绝）
+export async function handlePermissionRequest(requestId, action, ownerId, fileId = null, userId = null, permission = null) {
+  try {
+    const requestRef = doc(firestore, 'permissionRequests', requestId);
+    const requestSnap = await getDoc(requestRef);
+
+    if (!requestSnap.exists()) {
+      throw new Error('权限申请不存在');
+    }
+
+    const requestData = requestSnap.data();
+
+    if (action === 'approve' && (fileId || requestData.fileId) && (userId || requestData.requesterId) && (permission || requestData.requestedPermission)) {
+      // 获取实际的文件信息来确认所有者
+      const actualFileId = fileId || requestData.fileId;
+      const actualUserId = userId || requestData.requesterId;
+      const actualPermission = permission || requestData.requestedPermission;
+
+      // 获取文件信息以确认所有者
+      const fileRef = doc(firestore, 'files', actualFileId);
+      const fileSnap = await getDoc(fileRef);
+
+      if (!fileSnap.exists()) {
+        throw new Error('文件不存在');
+      }
+
+      const fileData = fileSnap.data();
+      const actualOwnerId = fileData.ownerId;
+
+      // 验证处理申请的用户是否是文件所有者
+      if (actualOwnerId !== ownerId) {
+        throw new Error('只有文件所有者可以处理权限申请');
+      }
+
+      // 批准申请，添加协作者
+      await addCollaborator(actualFileId, actualOwnerId, actualUserId, actualPermission);
+    }
+
+    // 更新申请状态
+    await updateDoc(requestRef, {
+      status: action === 'approve' ? 'approved' : 'rejected',
+      processedBy: ownerId,
+      processedAt: serverTimestamp()
+    });
+
+    return true;
+  } catch (error) {
+    console.error('处理权限申请失败:', error);
+    throw error;
+  }
+}
+
 export default {
   OPERATION_TYPES,
   checkFileAccess,
@@ -565,5 +712,9 @@ export default {
   getUserDetails,
   getUsersDetails,
   cleanupExpiredOperations,
-  cleanupAllExpiredOperations
+  cleanupAllExpiredOperations,
+  requestPermission,
+  getUserPermissionRequests,
+  getFileOwnerPermissionRequests,
+  handlePermissionRequest
 };

@@ -17,6 +17,13 @@ export const routes = [
         lazy: () => import('../features/dashboard/DashboardPage'),
         children: [
           {
+            index: true,
+            lazy: async () => {
+              const { Navigate } = await import('react-router');
+              return { Component: () => Navigate({ to: '/manuscripts', replace: true }) };
+            },
+          },
+          {
             path: 'manuscripts',
             lazy: () => import('../features/manuscripts/ManuscriptsPage'),
           },

@@ -14,6 +14,7 @@ import { AICollaborationPanel } from '../../components/ai/AICollaborationPanel';
 import { SharePanel } from '../../components/share/SharePanel';
 import { DraggablePanel } from '../../components/common/DraggablePanel';
 import { MaterialLibraryPanel } from '../../components/material/MaterialLibraryPanel';
+import { PermissionRequestPanel } from '../../components/permissonRequest/PermissionRequestPanel';
 import { joinByShareLink } from '../../services/collaborationService';
 import { firestore } from '../../services/firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -40,10 +41,12 @@ export const Component = () => {
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [showMaterialPanel, setShowMaterialPanel] = useState(false);
+  const [showPermissionRequestPanel, setShowPermissionRequestPanel] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [recentColors, setRecentColors] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
   const [ownerId, setOwnerId] = useState(null);
+  const [fileName, setFileName] = useState('');
 
   // 添加颜色到最近使用
   const addToRecentColors = (color) => {
@@ -167,17 +170,27 @@ export const Component = () => {
     });
   }, [collaboration.collaborators, collaboration.ownerId, collaboration.currentUser, collaboration.hasEditPermission, collaboration.hasAccess]);
 
-  // 访问权限检查
+  // 获取用户当前权限
+  const getCurrentUserPermission = () => {
+    if (!collaboration.currentUser) return 'none';
+    if (collaboration.ownerId === collaboration.currentUser.uid) return 'owner';
+
+    const collaborator = collaboration.collaborators?.find(c => c.userId === collaboration.currentUser.uid);
+    return collaborator?.permission || 'none';
+  };
+
+  // 访问权限检查 - 改为显示权限申请界面而不是直接跳转
   useEffect(() => {
     if (collaboration.currentUser && collaboration.ownerId && collaboration.collaborators !== undefined) {
       const hasAccess = collaboration.hasAccess;
+      const currentPermission = getCurrentUserPermission();
 
-      if (!hasAccess) {
-        message.error('您没有权限访问此文件');
-        navigate('/');
+      // 如果没有访问权限且不是所有者，显示权限申请面板
+      if (!hasAccess && currentPermission === 'none') {
+        setShowPermissionRequestPanel(true);
       }
     }
-  }, [collaboration.currentUser, collaboration.ownerId, collaboration.collaborators, collaboration.hasAccess, navigate]);
+  }, [collaboration.currentUser, collaboration.ownerId, collaboration.collaborators, collaboration.hasAccess]);
 
   // 使用editor hook
   const { init, editor } = useEditor({
@@ -353,6 +366,7 @@ export const Component = () => {
             console.log('文件详细信息:', data);
             setOwnerId(data.ownerId);
             setCollaborators(data.collaborators || []);
+            setFileName(data.fileName || '未知文件');
           }
 
           // 延迟一段时间后才启用自动保存，确保所有canvas事件都已处理完毕
@@ -1022,6 +1036,7 @@ export const Component = () => {
             fileId={fileId}
             collaborators={collaboration.collaborators}
             ownerId={collaboration.ownerId}
+            fileName={fileName}
             onClose={() => setShowCollaborationPanel(false)}
           />
         </DraggablePanel>
@@ -1065,8 +1080,46 @@ export const Component = () => {
         </DraggablePanel>
       )}
 
+      {/* 权限申请面板 */}
+      {showPermissionRequestPanel && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <PermissionRequestPanel
+            fileId={fileId}
+            userId={collaboration.currentUser?.uid}
+            currentPermission={getCurrentUserPermission()}
+            fileName={fileName}
+            onClose={() => setShowPermissionRequestPanel(false)}
+            onRequestSent={() => {
+              setShowPermissionRequestPanel(false);
+              // 如果是无权限用户，申请发送后返回首页
+              if (getCurrentUserPermission() === 'none') {
+                setTimeout(() => navigate('/'), 1000);
+              }
+            }}
+          />
+        </div>
+      )}
+
       {/* 右上角按钮 - 漂浮在画板上 */}
       <div className={styles.rightButtons} style={{ zIndex: 10 }}>
+        {/* 只读权限用户也可以申请更高权限 */}
+        {collaboration.currentUser && getCurrentUserPermission() === 'read' && (
+          <Button onClick={() => setShowPermissionRequestPanel(true)}>
+            申请编辑权限
+          </Button>
+        )}
+
         <Button onClick={() => setShowSharePanel(!showSharePanel)}>
           <img src="/imgs/share-nodes-solid.png" alt="图标" style={{ width: '13px', height: '15px', marginRight: '6px', verticalAlign: 'middle' }} />
           分享

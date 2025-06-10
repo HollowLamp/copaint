@@ -484,3 +484,40 @@
 .content::-webkit-scrollbar-thumb:hover {
   background: light-dark(var(--accent-primary), var(--accent-hover));
 }
+
+/* 权限申请 */
+.requestPermission {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.currentPermissionText {
+  margin: 0;
+  font-size: 13px;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  font-weight: 500;
+  padding: 8px 12px;
+  background: light-dark(rgba(var(--accent-primary-rgb), 0.05), rgba(var(--accent-primary-rgb), 0.1));
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-primary);
+}
+
+.requestButton {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #52c41a;
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+  color: #52c41a;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.requestButton:hover {
+  background: #52c41a;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(82, 196, 26, 0.3);
+}

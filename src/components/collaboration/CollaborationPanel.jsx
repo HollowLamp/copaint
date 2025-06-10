@@ -7,7 +7,8 @@ import {
   getOnlineCollaborators,
   getUsersDetails,
   getUserDetails,
-  checkPermission
+  checkPermission,
+  requestPermission
 } from '../../services/collaborationService';
 import styles from './CollaborationPanel.module.css';
 
@@ -17,7 +18,8 @@ export const CollaborationPanel = ({
   ownerId,
   onClose,
   dragRef,
-  onMouseDown
+  onMouseDown,
+  fileName = '未知文件'
 }) => {
   const { message } = App.useApp();
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -131,6 +133,26 @@ export const CollaborationPanel = ({
     } catch (error) {
       message.error('修改权限失败: ' + error.message);
     }
+  };
+
+  // 申请权限
+  const handleRequestPermission = async (requestedPermission) => {
+    try {
+      const requestMessage = prompt('请说明申请权限的理由:');
+      if (!requestMessage) return;
+
+      await requestPermission(fileId, currentUser.uid, requestedPermission, requestMessage);
+      message.success('权限申请已发送，请等待文件所有者审核');
+    } catch (error) {
+      message.error('发送申请失败: ' + error.message);
+    }
+  };
+
+  // 获取当前用户权限
+  const getCurrentUserPermission = () => {
+    if (currentUser?.uid === ownerId) return 'owner';
+    const userCollaborator = collaborators?.find(c => c.userId === currentUser?.uid);
+    return userCollaborator?.permission || 'none';
   };
 
 
@@ -269,6 +291,43 @@ export const CollaborationPanel = ({
                   添加为编辑
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* 申请权限 (仅非所有者可见) */}
+        {!isOwner && currentUser && (
+          <div className={styles.section}>
+            <h4>权限申请</h4>
+            <div className={styles.requestPermission}>
+              <p className={styles.currentPermissionText}>
+                当前权限: {getCurrentUserPermission() === 'none' ? '无权限' :
+                  getCurrentUserPermission() === 'read' ? '只读' : '编辑'}
+              </p>
+              {getCurrentUserPermission() === 'none' && (
+                <div className={styles.permissionButtons}>
+                  <button
+                    onClick={() => handleRequestPermission('read')}
+                    className={styles.requestButton}
+                  >
+                    申请只读权限
+                  </button>
+                  <button
+                    onClick={() => handleRequestPermission('edit')}
+                    className={styles.requestButton}
+                  >
+                    申请编辑权限
+                  </button>
+                </div>
+              )}
+              {getCurrentUserPermission() === 'read' && (
+                <button
+                  onClick={() => handleRequestPermission('edit')}
+                  className={styles.requestButton}
+                >
+                  申请编辑权限
+                </button>
+              )}
             </div>
           </div>
         )}

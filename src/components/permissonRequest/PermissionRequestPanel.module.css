@@ -1,0 +1,139 @@
+.permissionRequestPanel {
+  width: 400px;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 12px;
+  box-shadow: 0 8px 32px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.4));
+  overflow: hidden;
+  font-family: var(--font-family-base);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.content {
+  padding: 24px;
+}
+
+.fileInfo {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: light-dark(rgba(var(--accent-primary-rgb), 0.05), rgba(var(--accent-primary-rgb), 0.1));
+  border-radius: 8px;
+  border-left: 4px solid var(--accent-primary);
+}
+
+.fileInfo h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.currentPermission {
+  margin: 0;
+  font-size: 13px;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  font-weight: 500;
+}
+
+.formSection {
+  margin-bottom: 20px;
+}
+
+.formSection label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.permissionSelect :global(.ant-select-selector) {
+  border-radius: 6px !important;
+  border-color: light-dark(var(--border-color), var(--accent-secondary)) !important;
+  background: light-dark(var(--bg-primary), var(--bg-secondary)) !important;
+}
+
+.messageInput {
+  border-radius: 6px !important;
+  border-color: light-dark(var(--border-color), var(--accent-secondary)) !important;
+  background: light-dark(var(--bg-primary), var(--bg-secondary)) !important;
+}
+
+.messageInput :global(.ant-input) {
+  background: light-dark(var(--bg-primary), var(--bg-secondary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+}
+
+.cancelButton {
+  border-radius: 6px !important;
+  border-color: light-dark(var(--border-color), var(--accent-secondary)) !important;
+  background: light-dark(var(--bg-primary), var(--bg-secondary)) !important;
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+}
+
+.cancelButton:hover {
+  border-color: var(--accent-primary) !important;
+  color: var(--accent-primary) !important;
+}
+
+.submitButton {
+  border-radius: 6px !important;
+  background: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+}
+
+.submitButton:hover {
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+}
+
+.noPermissionText {
+  text-align: center;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  margin: 20px 0;
+  font-size: 14px;
+}
