@@ -946,8 +946,8 @@ export const Component = () => {
             background: collaboration.isOnline ? '#00ff00' : '#ff0000'
           }}></div>
           {collaboration.isOnline ? '已连接' : '已断线'}
-          {collaboration.collaborators.length > 0 && (
-            <span>| {collaboration.collaborators.length + 1} 人在线</span>
+          {collaboration.onlineUsers.length > 0 && (
+            <span>| {collaboration.onlineUsers.length} 人在线</span>
           )}
           {!collaboration.hasEditPermission && collaboration.ownerId !== collaboration.currentUser?.uid && (
             <span style={{ color: '#ffa500' }}>| 只读模式</span>
