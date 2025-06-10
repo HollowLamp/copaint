@@ -12,7 +12,6 @@
     "commit": "cz"
   },
   "dependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.42.0",
     "antd": "^5.25.4",
     "copaint": "file:",
     "fabric": "^5.3.0-browser",
