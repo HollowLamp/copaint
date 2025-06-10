@@ -14,34 +14,57 @@
   --gray-700: #374151;
   --gray-800: #1f2937;
   --gray-900: #111827;
+
+  /* Typography */
+  --font-family-base:
+    AlibabaPuHuiTi, SourceHanSansSC, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-family-heading: ZCOOLKuaiLe, AlibabaPuHuiTi, sans-serif;
+  --font-family-code: Poppins, source-code-pro, Menlo, Monaco, Consolas, monospace;
 }
 
 [data-theme='light'] {
-  --bg-primary: var(--orange-100); /* 主背景色（浅橙） */
-  --bg-secondary: var(--orange-50); /* 辅助背景色（更浅） */
+  --bg-primary: var(--orange-100);
+  /* 主背景色（浅橙） */
+  --bg-secondary: var(--orange-50);
+  /* 辅助背景色（更浅） */
 
-  --text-primary: var(--gray-900); /* 主要文字（深色） */
-  --text-secondary: var(--gray-600); /* 次要文字（灰色） */
+  --text-primary: var(--gray-900);
+  /* 主要文字（深色） */
+  --text-secondary: var(--gray-600);
+  /* 次要文字（灰色） */
 
-  --accent-primary: var(--orange-500); /* 主色调（按钮背景） */
-  --accent-hover: var(--orange-600); /* 按钮hover */
-  --accent-secondary: var(--orange-400); /* 边框色 */
+  --accent-primary: var(--orange-500);
+  /* 主色调（按钮背景） */
+  --accent-hover: var(--orange-600);
+  /* 按钮hover */
+  --accent-secondary: var(--orange-400);
+  /* 边框色 */
 
-  --border-color: var(--orange-100); /* 边框颜色 */
+  --border-color: var(--orange-100);
+  /* 边框颜色 */
 }
 
 [data-theme='dark'] {
-  --bg-primary: var(--gray-800); /* 主背景色（深灰） */
-  --bg-secondary: var(--gray-900); /* 辅助背景色（更深） */
+  --bg-primary: var(--gray-800);
+  /* 主背景色（深灰） */
+  --bg-secondary: var(--gray-900);
+  /* 辅助背景色（更深） */
 
-  --text-primary: var(--gray-50); /* 主要文字（浅色） */
-  --text-secondary: var(--gray-100); /* 次要文字（浅灰） */
+  --text-primary: var(--gray-50);
+  /* 主要文字（浅色） */
+  --text-secondary: var(--gray-100);
+  /* 次要文字（浅灰） */
 
-  --accent-primary: var(--gray-600); /* 主色调（按钮背景 深色） */
-  --accent-hover: var(--gray-500); /* 按钮hover */
-  --accent-secondary: var(--gray-700); /* 边框色 */
+  --accent-primary: var(--gray-600);
+  /* 主色调（按钮背景 深色） */
+  --accent-hover: var(--gray-500);
+  /* 按钮hover */
+  --accent-secondary: var(--gray-700);
+  /* 边框色 */
 
-  --border-color: var(--gray-700); /* 边框颜色 */
+  --border-color: var(--gray-700);
+  /* 边框颜色 */
 }
 
 * {
@@ -53,8 +76,21 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
   font-family: 'ZCOOLKuaiLe', 'Poppins', 'AlibabaPuHuiTi', 'SourceHanSansSC', sans-serif;
+  font-family: var(--font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-heading);
+}
+
+code {
+  font-family: var(--font-family-code);
 }

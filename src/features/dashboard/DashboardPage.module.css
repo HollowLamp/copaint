@@ -1,19 +1,184 @@
-.buttonGroup {
-  margin-top: 20px;
+/* 仪表盘基础布局 */
+.dashboard {
+  position: fixed;
+  /* 固定定位 */
+  top: 0;
+  /* 固定在顶部 */
+  left: 0;
+  /* 固定在左侧 */
+  right: 0;
+  /* 固定在右侧 */
+  bottom: 0;
+  /* 固定在底部 */
   display: flex;
+  /* 使用弹性布局 */
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  /* 背景色 */
+}
+
+/* Logo 区域样式 */
+.logo {
+  height: 64px;
+  /* 固定高度 */
+  margin: 0;
+  /* 移除外边距 */
+  padding: 0 24px;
+  /* 左右内边距 */
+  font-size: 22px;
+  /* 字体大小 */
+  font-weight: bold;
+  /* 字体加粗 */
+  font-family: 'ZCOOLKuaiLe', sans-serif;
+  /* 使用快乐字体 */
+  color: var(--accent-primary);
+  /* 使用主题色 */
+  display: flex;
+  /* 使用弹性布局 */
+  align-items: center;
+  /* 垂直居中 */
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  /* 底部边框 */
+}
+
+/* 侧边栏样式 */
+.dashboard :global(.ant-layout-sider) {
+  border-right: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  /* 右侧边框 */
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary)) !important;
+  /* 背景色 */
+  height: 100%;
+  /* 占满高度 */
+  overflow: hidden;
+  /* 防止滚动 */
+}
+
+/* 菜单基础样式 */
+.dashboard :global(.ant-menu) {
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  /* 菜单背景色 */
+  height: calc(100% - 64px);
+  /* 减去 logo 高度 */
+  overflow-y: auto;
+  /* 允许菜单滚动 */
+}
+
+/* 菜单项和子菜单样式 */
+.dashboard :global(.ant-menu-item),
+.dashboard :global(.ant-menu-submenu) {
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  /* 文字颜色 */
+}
+
+/* 子菜单标题悬停效果 */
+.dashboard :global(.ant-menu-submenu-title:hover) {
+  color: var(--accent-primary);
+  /* 悬停时使用主题色 */
+}
+
+/* 菜单项悬停效果 */
+.dashboard :global(.ant-menu-item:hover) {
+  color: var(--accent-primary);
+  /* 悬停时使用主题色 */
+}
+
+/* 选中菜单项样式 */
+.dashboard :global(.ant-menu-item-selected) {
+  background-color: light-dark(var(--accent-secondary), var(--accent-primary)) !important;
+  /* 选中背景色 */
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  /* 选中文字颜色 */
+}
+
+/* 头部区域样式 */
+.header {
+  height: 64px;
+  /* 固定高度 */
+  padding: 0 24px;
+  /* 左右内边距 */
+  display: flex;
+  /* 使用弹性布局 */
+  align-items: center;
+  /* 垂直居中 */
+  justify-content: flex-end;
+  /* 内容右对齐 */
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  /* 背景色 */
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  /* 底部边框 */
+  position: sticky;
+  /* 粘性定位 */
+  top: 0;
+  /* 固定在顶部 */
+  z-index: 10;
+  /* 确保在其他元素之上 */
+}
+
+/* 主题切换图标样式 */
+.header :global(.anticon-bulb) {
+  font-size: 20px;
+  /* 图标大小 */
+  margin-left: 16px;
+  /* 左边距 */
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  /* 图标颜色 */
+  cursor: pointer;
+  /* 鼠标指针样式 */
+  transition: color 0.3s ease;
+  /* 颜色过渡动画 */
+}
+
+/* 主题切换图标悬停效果 */
+.header :global(.anticon-bulb:hover) {
+  color: var(--accent-primary);
+  /* 悬停时使用主题色 */
+}
+
+/* 内容区域样式 */
+.content {
+  height: calc(100vh - 64px);
+  /* 减去头部高度 */
+  overflow-y: auto;
+  /* 允许垂直滚动 */
+  background-color: light-dark(var(--bg-secondary), var(--bg-primary));
+  /* 背景色 */
+  padding: 24px;
+  /* 内边距 */
+}
+
+/* 全局过渡动画效果 */
+.dashboard :global(*) {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 平滑过渡效果 */
+}
+
+/* 按钮组容器样式 */
+.buttonGroup {
+  padding: 16px;
+  /* 内边距 */
+  margin-top: auto;
+  /* 顶部自动边距，将按钮组推到底部 */
+  display: flex;
+  /* 使用弹性布局 */
   flex-direction: column;
-  gap: 12px;
+  /* 垂直排列 */
+  gap: 8px;
+  /* 按钮之间的间距 */
 }
 
-.themeButton {
-  background-color: light-dark(var(--orange-500), var(--gray-600));
-  color: light-dark(var(--gray-900), var(--gray-50));
-  border: 2px solid light-dark(var(--orange-400), var(--gray-700));
-  border-radius: 8px;
-  padding: 12px 24px;
+/* 图标基础样式 */
+.icon {
+  font-size: 18px;
+  /* 图标大小 */
+  cursor: pointer;
+  /* 鼠标指针样式 */
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  /* 图标颜色 */
+  transition: color 0.3s ease;
+  /* 颜色过渡动画 */
 }
 
-.themeButton:hover {
-  background-color: light-dark(var(--orange-600), var(--gray-500));
-  transform: translateY(-2px);
+/* 图标悬停效果 */
+.icon:hover {
+  color: var(--accent-primary);
+  /* 悬停时使用主题色 */
 }

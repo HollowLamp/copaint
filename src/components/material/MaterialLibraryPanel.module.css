@@ -1,0 +1,218 @@
+.materialPanel {
+  width: 420px;
+  max-height: 85vh;
+  background: light-dark(var(--bg-secondary), var(--bg-primary));
+  border: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 8px;
+  box-shadow: 0 4px 16px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-family-base);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid light-dark(var(--border-color), var(--accent-secondary));
+  background: light-dark(var(--accent-secondary), var(--accent-primary));
+  cursor: grab;
+  user-select: none;
+}
+
+.header:active {
+  cursor: grabbing;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refreshButton {
+  color: light-dark(var(--text-primary), var(--text-secondary)) !important;
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  height: auto !important;
+}
+
+.refreshButton:hover {
+  background: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1)) !important;
+  color: light-dark(var(--accent-primary), var(--accent-hover)) !important;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: light-dark(var(--text-secondary), var(--text-primary));
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  max-height: calc(85vh - 60px);
+}
+
+/* 图片网格布局 */
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.imageCard {
+  position: relative;
+  aspect-ratio: 3/2;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+}
+
+.imageCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+  border-color: light-dark(var(--accent-primary), var(--accent-hover));
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.imageCard:hover .image {
+  transform: scale(1.05);
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.imageCard:hover .imageOverlay {
+  opacity: 1;
+}
+
+.addIcon {
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+}
+
+.imageInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.imageCard:hover .imageInfo {
+  opacity: 1;
+}
+
+.imageAuthor {
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+
+
+/* 加载状态 */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: light-dark(rgba(255, 255, 255, 0.9), rgba(31, 31, 31, 0.9));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.loadingOverlay p {
+  margin-top: 12px;
+  color: light-dark(var(--text-primary), var(--text-secondary));
+  font-size: 14px;
+}
+
+/* 滚动条样式 */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: light-dark(var(--bg-primary), var(--bg-secondary));
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: light-dark(var(--border-color), var(--accent-secondary));
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: light-dark(var(--accent-primary), var(--accent-hover));
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .materialPanel {
+    width: 90vw;
+  }
+
+  .imageGrid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+}

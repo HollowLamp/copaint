@@ -1,0 +1,24 @@
+.draggablePanel {
+  position: fixed;
+  z-index: 1000;
+  user-select: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.draggablePanel.dragging {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
+
+.draggableContent {
+  /* 这个类将被应用到包装的面板内容上 */
+}
+
+/* 拖动提示样式 */
+.draggablePanel .header {
+  cursor: grab;
+}
+
+.draggablePanel.dragging .header {
+  cursor: grabbing;
+}
