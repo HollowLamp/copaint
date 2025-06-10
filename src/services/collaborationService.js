@@ -358,29 +358,41 @@ export async function joinByShareLink(fileId, shareCode, userId, password = '') 
 // 获取用户详细信息
 export async function getUserDetails(userId) {
   try {
-    const userRef = doc(firestore, 'users', userId);
+    // 参数验证
+    if (!userId || typeof userId !== 'string' || !userId.trim()) {
+      return {
+        uid: userId || 'unknown',
+        nickname: `未知用户`,
+        email: null
+      };
+    }
+
+    const trimmedUserId = userId.trim();
+    const userRef = doc(firestore, 'users', trimmedUserId);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
       const userData = userSnap.data();
       return {
-        uid: userId,
-        nickname: userData.nickname || userData.displayName || `用户_${userId.slice(0, 6)}`,
+        uid: trimmedUserId,
+        nickname: userData.nickname || userData.displayName || `用户_${trimmedUserId.slice(0, 6)}`,
         email: userData.email
       };
     } else {
       // 如果用户文档不存在，返回默认信息
       return {
-        uid: userId,
-        nickname: `用户_${userId.slice(0, 6)}`,
+        uid: trimmedUserId,
+        nickname: `用户_${trimmedUserId.slice(0, 6)}`,
         email: null
       };
     }
   } catch (error) {
     console.error('获取用户详细信息失败:', error);
+    // 确保即使在错误情况下也返回有效的fallback数据
+    const safeUserId = (userId && typeof userId === 'string') ? userId.trim() : 'unknown';
     return {
-      uid: userId,
-      nickname: `用户_${userId.slice(0, 6)}`,
+      uid: safeUserId,
+      nickname: safeUserId === 'unknown' ? '未知用户' : `用户_${safeUserId.slice(0, 6)}`,
       email: null
     };
   }

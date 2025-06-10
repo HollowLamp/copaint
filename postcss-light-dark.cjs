@@ -6,10 +6,12 @@ module.exports = () => {
     Once(root) {
       const lightRules = new Map();
       const darkRules = new Map();
+      const defaultRules = new Map();
 
       root.walkRules((rule) => {
         const declarationsToLight = [];
         const declarationsToDark = [];
+        const declarationsToDefault = [];
 
         rule.walkDecls((decl) => {
           if (!decl.value.includes('light-dark(')) return;
@@ -34,6 +36,7 @@ module.exports = () => {
 
           declarationsToLight.push(decl.clone({ value: lightValue }));
           declarationsToDark.push(decl.clone({ value: darkValue }));
+          declarationsToDefault.push(decl.clone({ value: lightValue }));
 
           decl.remove();
         });
@@ -42,6 +45,11 @@ module.exports = () => {
           const baseSelector = rule.selector;
           const lightSelector = `[data-theme="light"] ${baseSelector}`;
           const darkSelector = `[data-theme="dark"] ${baseSelector}`;
+
+          if (!defaultRules.has(baseSelector)) {
+            defaultRules.set(baseSelector, postcss.rule({ selector: baseSelector }));
+          }
+          declarationsToDefault.forEach((decl) => defaultRules.get(baseSelector).append(decl));
 
           if (!lightRules.has(lightSelector)) {
             lightRules.set(lightSelector, postcss.rule({ selector: lightSelector }));
@@ -55,6 +63,7 @@ module.exports = () => {
         }
       });
 
+      defaultRules.forEach((rule) => root.append(rule));
       lightRules.forEach((rule) => root.append(rule));
       darkRules.forEach((rule) => root.append(rule));
     },

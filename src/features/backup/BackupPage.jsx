@@ -51,32 +51,57 @@ export const Component = () => {
         message.error("用户未登录");
         return;
       }
+
       const recentFiles = await userService.getRecentFiles(uid);
-      console.log("最近打开的文件:", recentFiles);
+
       if (!Array.isArray(recentFiles) || recentFiles.length === 0) {
         setRecentlyOpened([]);
         return;
       }
+
       const files = await Promise.all(
         recentFiles.map(async (fileId) => {
-          const file = await fileService.getFileContent(fileId);
-          return {
-            ...file,
-            id: fileId,
-          };
+          try {
+            const file = await fileService.getFileContent(fileId);
+
+            // 验证文件数据的完整性
+            if (!file) {
+              return null;
+            }
+
+            const fileData = {
+              ...file,
+              id: fileId,
+            };
+
+            return fileData;
+          } catch (error) {
+            console.error(`加载文件失败: ${fileId}`, error);
+            return null;
+          }
         })
       );
+
+      // 过滤掉加载失败的文件
+      const validFiles = files.filter(file => file !== null);
 
       // 获取所有文件所有者和协作者的昵称
       const newNames = { ...collaboratorNames };
       const allUserIds = new Set();
 
       // 收集所有需要获取名称的用户ID
-      files.forEach(file => {
-        allUserIds.add(file.ownerId);
-        if (file.collaborators) {
-          file.collaborators.forEach(collaborator => {
-            allUserIds.add(collaborator.userId);
+      validFiles.forEach((file) => {
+        // 检查并添加文件所有者ID
+        if (file.ownerId && typeof file.ownerId === 'string' && file.ownerId.trim()) {
+          allUserIds.add(file.ownerId);
+        }
+
+        // 检查并添加协作者ID
+        if (file.collaborators && Array.isArray(file.collaborators)) {
+          file.collaborators.forEach((collaborator) => {
+            if (collaborator.userId && typeof collaborator.userId === 'string' && collaborator.userId.trim()) {
+              allUserIds.add(collaborator.userId);
+            }
           });
         }
       });
@@ -88,17 +113,17 @@ export const Component = () => {
             const userDetails = await getUserDetails(userId);
             newNames[userId] = userDetails.nickname;
           } catch (error) {
-            console.error('获取用户信息失败:', error);
-            newNames[userId] = userId;
+            console.error(`获取用户信息失败: ${userId}`, error);
+            newNames[userId] = `用户_${userId.slice(0, 6)}`;
           }
         }
       });
 
       await Promise.all(promises);
       setCollaboratorNames(newNames);
-      setRecentlyOpened(files);
+      setRecentlyOpened(validFiles);
     } catch (err) {
-      console.error("❌ 加载最近打开文件失败:", err);
+      console.error("加载最近打开文件失败:", err);
       message.error("加载最近打开文件失败");
     } finally {
       setLoading(false); // 结束加载
@@ -183,11 +208,17 @@ export const Component = () => {
     const newNames = { ...collaboratorNames };
     const refreshPromises = file.collaborators.map(async (collaborator) => {
       try {
+        // 验证协作者userId
+        if (!collaborator.userId || typeof collaborator.userId !== 'string') {
+          newNames[collaborator.userId] = '未知用户';
+          return;
+        }
+
         const userDetails = await getUserDetails(collaborator.userId);
         newNames[collaborator.userId] = userDetails.nickname;
       } catch (error) {
-        console.error('获取用户信息失败:', error);
-        newNames[collaborator.userId] = collaborator.userId;
+        console.error(`获取协作者信息失败: ${collaborator.userId}`, error);
+        newNames[collaborator.userId] = collaborator.userId || '未知用户';
       }
     });
 
@@ -239,6 +270,7 @@ export const Component = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h2>最近打开</h2>
+
       <Space style={{ marginBottom: 20 }}>
         <Radio.Group
           options={SORT_OPTIONS}

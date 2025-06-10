@@ -1,13 +1,30 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/site_logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copaint</title>
+
+  <!-- 主题初始化脚本 - 在页面加载时立即执行，避免样式闪烁 -->
+  <script>
+    (function () {
+      // 尽早设置主题，避免样式丢失
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+
+      // 如果是新用户，保存默认主题
+      if (!localStorage.getItem('theme')) {
+        localStorage.setItem('theme', 'light');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

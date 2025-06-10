@@ -7,9 +7,15 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
+    const initialTheme = savedTheme || 'light'; // 如果没有保存的主题，默认使用light
+
+    setTheme(initialTheme);
+    // 始终设置data-theme属性，确保CSS样式生效
+    document.documentElement.setAttribute('data-theme', initialTheme);
+
+    // 如果是新用户（没有保存的主题），保存默认主题
+    if (!savedTheme) {
+      localStorage.setItem('theme', initialTheme);
     }
   }, []);
 
