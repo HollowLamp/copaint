@@ -17,6 +17,24 @@ export default defineConfig({
         headers: {
           'Origin': 'https://dashscope.aliyuncs.com'
         }
+      },
+      // 代理Picsum Photos API解决CORS问题
+      '/api/picsum': {
+        target: 'https://picsum.photos',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/picsum/, ''),
+        headers: {
+          'Origin': 'https://picsum.photos'
+        }
+      },
+      // 代理Fastly CDN (Picsum的CDN)
+      '/api/fastly-picsum': {
+        target: 'https://fastly.picsum.photos',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/fastly-picsum/, ''),
+        headers: {
+          'Origin': 'https://fastly.picsum.photos'
+        }
       }
     }
   }

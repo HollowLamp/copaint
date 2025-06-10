@@ -50,8 +50,8 @@ export const MaterialLibraryPanel = ({
     return batchIds.map((imageId, index) => ({
       id: `image-batch-${batchNum}-${index}-${Date.now()}`, // 添加时间戳确保唯一性
       imageId: imageId, // 保存固定的图片ID
-      url: `https://picsum.photos/id/${imageId}/300/200`,
-      fullUrl: `https://picsum.photos/id/${imageId}/1200/800`,
+      url: `/api/picsum/id/${imageId}/300/200`,
+      fullUrl: `/api/picsum/id/${imageId}/1200/800`,
       alt: `素材图片 ${imageId}`,
       author: 'Picsum Photos'
     }));
@@ -88,8 +88,8 @@ export const MaterialLibraryPanel = ({
     }
 
     try {
-      // 使用图片的固定ID确保获取同一张图片
-      const imageUrl = `https://picsum.photos/id/${image.imageId}/1200/800`;
+      // 使用代理路径避免CORS问题
+      const imageUrl = `/api/picsum/id/${image.imageId}/1200/800`;
       await editor.addImage(imageUrl);
       message.success('图片已添加到画布！');
     } catch (error) {
